@@ -19,38 +19,38 @@ builder.Services.AddScoped<IToDo, ToDoRepo>();
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(TodoProfile));
 
-builder.Services
-    .AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<AplicationDbContext>()
-    .AddDefaultTokenProviders();
+// builder.Services
+//     .AddIdentity<ApplicationUser, IdentityRole>()
+//     .AddEntityFrameworkStores<AplicationDbContext>()
+//     .AddDefaultTokenProviders();
 
-builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.SaveToken = true;
-        options.RequireHttpsMetadata = false;
+// builder.Services
+//     .AddAuthentication(options =>
+//     {
+//         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//     })
+//     .AddJwtBearer(options =>
+//     {
+//         options.SaveToken = true;
+//         options.RequireHttpsMetadata = false;
 
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!)),
+//         options.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuerSigningKey = true,
+//             IssuerSigningKey = new SymmetricSecurityKey(
+//                 Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!)),
 
-            ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+//             ValidateIssuer = true,
+//             ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
 
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["JWT:ValidAudience"],
+//             ValidateAudience = true,
+//             ValidAudience = builder.Configuration["JWT:ValidAudience"],
 
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
-        };
-    });
+//             ValidateLifetime = true,
+//             ClockSkew = TimeSpan.Zero
+//         };
+//     });
 
 builder.Services.AddAuthorization();
 

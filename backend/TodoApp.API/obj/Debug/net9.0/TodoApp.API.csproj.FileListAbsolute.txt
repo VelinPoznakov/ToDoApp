@@ -132,3 +132,11 @@
 /Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/obj/Debug/net9.0/ref/TodoApp.API.dll
 /Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/obj/Debug/net9.0/TodoApp.API.sourcelink.json
 /Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/Microsoft.IdentityModel.Logging.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/Microsoft.IdentityModel.Tokens.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/System.IdentityModel.Tokens.Jwt.dll
