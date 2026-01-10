@@ -13,3 +13,4 @@
 /Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.Application/obj/Debug/net9.0/refint/TodoApp.Application.dll
 /Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.Application/obj/Debug/net9.0/TodoApp.Application.pdb
 /Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.Application/obj/Debug/net9.0/ref/TodoApp.Application.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.Application/obj/Debug/net9.0/TodoApp.Application.sourcelink.json

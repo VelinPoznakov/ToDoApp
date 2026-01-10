@@ -130,3 +130,5 @@
 /Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/obj/Debug/net9.0/TodoApp.API.pdb
 /Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/obj/Debug/net9.0/TodoApp.API.genruntimeconfig.cache
 /Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/obj/Debug/net9.0/ref/TodoApp.API.dll
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/obj/Debug/net9.0/TodoApp.API.sourcelink.json
+/Users/velinpoznakov/Documents/ToDoApp/backend/TodoApp.API/bin/Debug/net9.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
