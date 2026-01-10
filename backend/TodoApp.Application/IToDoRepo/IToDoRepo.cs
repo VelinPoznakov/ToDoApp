@@ -10,7 +10,7 @@ namespace TodoApp.Infrastructure.Ropositories.IToDoRepo
     {
         Task CreateAsync(ToDo toDo);
         Task DeleteAsync(ToDo toDo);
-        Task<List<ToDo>> GetAllAsync(int id);
+        Task<List<ToDo>> GetAllAsync();
 
         Task<ToDo?> GetByIdAsync(int id);
         Task UpdateAsync(ToDo toDo);

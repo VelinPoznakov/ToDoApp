@@ -28,14 +28,9 @@ namespace TodoApp.Application.Ropositories
       await _context.SaveChangesAsync();
     }
 
-    public async Task<List<ToDo>> GetAllAsync(ToDoQuerySearch query)
+    public async Task<List<ToDo>> GetAllAsync()
     {
       return await _context.ToDos.ToListAsync();
-    }
-
-    public Task<List<ToDo>> GetAllAsync(int id)
-    {
-      throw new NotImplementedException();
     }
 
     public async Task<ToDo?> GetByIdAsync(int id)
