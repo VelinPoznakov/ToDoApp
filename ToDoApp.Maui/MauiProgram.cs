@@ -2,6 +2,7 @@
 using ToDoApp.Maui.Services;
 using ToDoApp.Maui.Services.Interfaces;
 using ToDoApp.Maui.ViewModels;
+using ToDoApp.Maui.Views;
 
 namespace ToDoApp.Maui;
 
@@ -18,8 +19,14 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 		
+// HttpClient + Service
+		builder.Services.AddSingleton(new HttpClient());
 		builder.Services.AddSingleton<ITodoApiService, TodoApiService>();
+
+// ViewModel + Page
 		builder.Services.AddTransient<TodosViewModel>();
+		builder.Services.AddTransient<TodosPage>();
+
 
 
 #if DEBUG

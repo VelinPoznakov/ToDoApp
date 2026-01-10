@@ -1,11 +1,15 @@
-﻿namespace ToDoApp.Maui;
+﻿using ToDoApp.Maui.Views;
+
+namespace ToDoApp.Maui;
 
 public partial class App : Application
 {
-	public App()
-	{
-		InitializeComponent();
-	}
+    public App(TodosPage todosPage)
+    {
+        InitializeComponent();
+        MainPage = new NavigationPage(todosPage);
+    }
+
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
