@@ -3,21 +3,29 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using TodoApp.API.Mapping;
 using TodoApp.Application.Ropositories;
 using TodoApp.Application.Services;
 using TodoApp.Application.Services.Interfaces;
 using TodoApp.Domain.Models;
 using TodoApp.Infrastructure.Data;
+using TodoApp.Infrastructure.Ropositories.IToDoRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IToDoService, ToDoService>();
-builder.Services.AddScoped<IToDo, ToDoRepo>();
 builder.Services.AddControllers();
-builder.Services.AddAutoMapper(typeof(TodoProfile));
+
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
+// Service Registrations
+builder.Services.AddScoped<IToDoService, ToDoService>();
+
+// Repository Registrations
+builder.Services.AddScoped<IToDoRepo, ToDoRepo>();
+
 
 // builder.Services
 //     .AddIdentity<ApplicationUser, IdentityRole>()

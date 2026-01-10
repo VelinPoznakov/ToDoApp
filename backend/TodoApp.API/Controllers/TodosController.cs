@@ -16,63 +16,38 @@ public class TodosController : ControllerBase
         _service = service;
     }
 
-    // GET: api/todos
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] ToDoQuerySearch query)
+    public async Task<ActionResult<IEnumerable<TodoResponseDto>>> GetAll()
     {
-        var result = await _service.GetAllAsync(query);
+        var result = await _service.GetAllAsync();
         return Ok(result);
     }
 
-    // GET: api/todos/{id}
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
     {
-        // Get a specific to-do item by ID
         var todo = await _service.GetByIdAsync(id);
-        // If not found, return 404
-        if (todo == null)
-            return NotFound();
-
-        // Return the to-do item
-        return Ok(todo);
+        return todo == null ? NotFound() : Ok(todo);
     }
 
-    // POST: api/todos
     [HttpPost]
-    public async Task<IActionResult> Create(CreateTodoDto dto)
+    public async Task<IActionResult> Create([FromBody] CreateTodoDto dto)
     {
-        // Create a new to-do item
         var todo = await _service.CreateAsync(dto);
-        // Return the created to-do item
-        return Ok(todo);
+        return CreatedAtAction(nameof(GetById), new { id = todo.Id }, todo);
     }
 
-    // PUT: api/todos/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UpdateTodoDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateTodoDto dto)
     {
-        // Update an existing to-do item
-        var updated = await _service.UpdateAsync(id, dto.Name, dto.Description);
-        // If not found, return 404
-        if (updated == null)
-            return NotFound();
-
-        // Return the updated to-do item
-        return Ok(updated);
+        return Ok(await _service.UpdateAsync(id, dto));
     }
 
     // DELETE: api/todos/{id}
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(int id)
     {
-        // Delete a to-do item
-        var deleted = await _service.DeleteAsync(id);
-        // If not found, return 404
-        if (!deleted)
-            return NotFound();
-
-        // Return no content on successful deletion
+        await _service.DeleteAsync(id);
         return NoContent();
     }
 }
