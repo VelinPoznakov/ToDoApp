@@ -13,8 +13,14 @@ namespace TodoApp.Domain.Models
 
         [Required, MaxLength(50)]
         public string Name { get; set; } = string.Empty;
+
         [Required, MaxLength(250)]
         public string Description { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime ForDate { get; set; }
+
+        public bool IsCompleted { get; set; } = false;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         

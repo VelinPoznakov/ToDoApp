@@ -12,6 +12,7 @@ namespace TodoApp.Application.Dtos
     {
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public DateTime ForDate { get; set; }
     }
 }
 
@@ -19,10 +20,11 @@ class UpdateTodoDtoProfile : Profile
 {
   public UpdateTodoDtoProfile()
   {
-    CreateMap<UpdateTodoDto, ToDo>()
-        .ForMember(dest => dest.Id, opt => opt.Ignore())
-        .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-        .ForMember(dest => dest.ModifiedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
-        
-  }
+        CreateMap<UpdateTodoDto, ToDo>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.ModifiedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.IsCompleted, opt => opt.Ignore());
+
+    }
 }

@@ -23,13 +23,19 @@ namespace TodoApp.Application.Services
         var todo = _mapper.Map<ToDo>(dto);
 
         await _repo.CreateAsync(todo);
+
+        todo.CreatedAt = DateTime.UtcNow;
+        todo.ModifiedAt = DateTime.UtcNow;
+
         return _mapper.Map<TodoResponseDto>(todo);    
       
     }
 
     public async Task DeleteAsync(int id)
     {
-        var todo = await _repo.GetByIdAsync(id) ?? throw new Exception("Todo not found");
+        var todo = await _repo.GetByIdAsync(id)
+                ?? throw new Exception("Todo not found");
+
         await _repo.DeleteAsync(todo);
     }
 
@@ -47,7 +53,8 @@ namespace TodoApp.Application.Services
 
     public async Task<TodoResponseDto> UpdateAsync(int id, UpdateTodoDto dto)
     {
-        var todo = _repo.GetByIdAsync(id).Result ?? throw new Exception("Todo not found");
+        var todo = _repo.GetByIdAsync(id).Result
+                ?? throw new Exception("Todo not found");
 
         todo.ModifiedAt = DateTime.UtcNow;
 
