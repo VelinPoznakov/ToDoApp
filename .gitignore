@@ -136,3 +136,99 @@ appsettings.Local.json
 
 *.sqlite
 *.db
+
+
+####################################
+# .NET / C#
+####################################
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.rsuser
+*.pdb
+*.cache
+*.log
+
+####################################
+# Visual Studio / VS Code / Rider
+####################################
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/
+*.sln.iml
+
+####################################
+# MAUI / Xamarin
+####################################
+# Android
+**/Platforms/Android/bin/
+**/Platforms/Android/obj/
+**/*.apk
+**/*.aab
+**/*.keystore
+**/*.jks
+
+# iOS / MacCatalyst
+**/Platforms/iOS/bin/
+**/Platforms/iOS/obj/
+**/Platforms/MacCatalyst/bin/
+**/Platforms/MacCatalyst/obj/
+
+####################################
+# Android tooling
+####################################
+android/
+local.properties
+.gradle/
+*.iml
+
+####################################
+# Apple / macOS
+####################################
+.DS_Store
+.AppleDouble
+.AppleDB
+.AppleDesktop
+.Trashes
+*.xcuserstate
+*.xcworkspace
+
+####################################
+# Logs & temp files
+####################################
+logs/
+*.tmp
+*.bak
+*.swp
+*~
+
+####################################
+# Build artifacts
+####################################
+publish/
+artifacts/
+
+####################################
+# Environment / secrets
+####################################
+appsettings.Development.json
+appsettings.Production.json
+*.env
+
+####################################
+# NuGet
+####################################
+*.nupkg
+.nuget/
+
+####################################
+# Misc
+####################################
+Thumbs.db
+ehthumbs.db
