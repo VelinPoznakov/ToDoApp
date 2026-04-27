@@ -16,8 +16,6 @@ namespace TodoApp
     {
         public static void Main(string[] args)
         {
-            // Todo: Cookie configuration
-
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
