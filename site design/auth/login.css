@@ -1,0 +1,123 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    height: 100vh;   
+    margin: 0;
+    background-color: #F5F6FA;
+}
+.login-form{
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    gap: 1em;
+    padding: 4.5em 2em 1.5em 2em;
+    position: relative;
+    background-color: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border-radius: 7px;
+}
+
+.login-photo {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+}
+
+.text{
+    font-size: 14px;
+}
+
+.label{
+    font-weight: bold;
+}
+
+input{
+    border-radius: 5px;
+    border: 1px solid #caccd3;
+}
+
+input:focus{
+    outline: none;
+    border-color: #caccd3;
+}
+
+h3{
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.header-ctr{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.field-ctr{
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.text-ctr{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.link-text{
+    text-decoration: none;
+    color: #6C4CFF;
+}
+
+.bottom-text-ctr{
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+#email, #password{
+    padding: 0.5em;
+}
+
+.login-btn{
+    padding: 0.8em;
+    background-color: #6C4CFF;
+    border: none;
+    border-radius: 8px;
+    color: white;
+}
+
+@media screen and (max-width: 742px) {
+    .login-form{
+        width: 75%;
+    }
+
+    .text-ctr{
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .bottom-text-ctr{
+        flex-direction: column;
+        align-items: center;
+    }
+
+}
+
+@media (max-width: 1200px) and (min-width: 650px){
+    .login-form{
+        width: 40%;
+    }
+    
+    .text-ctr{
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+}
