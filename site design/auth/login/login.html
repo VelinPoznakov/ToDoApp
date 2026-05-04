@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/reset.css" />
+    <link rel="stylesheet" href="./login.css" />
+    <link rel="stylesheet" href="/navbar.css" />
+  </head>
+  <body>
+    <nav>
+      <ul class="nav">
+        <li class="app-name">
+          <a href=""
+            ><img class="logo-img" src="/logo.png" alt="logo-img"
+          /></a>
+          <a href="">To Do</a>
+        </li>
+
+        <li class="auth">
+          <a href="">Login</a>
+          <a href="" class="register-btn">Register</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="ctr">
+      <form action="" class="login-form">
+        <img src="./login-photo.png" alt="login-photo" class="login-photo" />
+
+        <div class="header-ctr">
+          <h3>Welcome Back!</h3>
+          <p class="text">Login to your account</p>
+        </div>
+
+        <div class="field-ctr">
+          <label class="text label" for="email">Email</label>
+          <input type="text" id="email" />
+        </div>
+
+        <div class="field-ctr">
+          <label class="text label" for="password">Password</label>
+          <input type="password" id="password" />
+        </div>
+
+        <div class="text-ctr">
+          <div class="inner-ctr">
+            <input type="checkbox" id="remeber-me" />
+            <label for="remeber-me">Remember me</label>
+          </div>
+
+          <a href="" class="link-text">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+
+        <div class="bottom-text-ctr">
+          <p>Don't have an account?</p>
+          <a href="" class="link-text">Register</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
