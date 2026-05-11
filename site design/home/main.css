@@ -1,3 +1,8 @@
+body > div{
+  padding: 0.8em;
+  background-color: #F5F6FA;
+}
+
 .ctr{
   display: flex;
   width: 100%;
