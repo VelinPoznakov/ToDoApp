@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\" />
+    <Folder Include="wwwroot\css\main\" />
   </ItemGroup>
 
 </Project>
