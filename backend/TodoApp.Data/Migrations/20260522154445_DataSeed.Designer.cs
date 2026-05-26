@@ -12,8 +12,8 @@ using TodoApp.Data;
 namespace TodoApp.Data.Migrations
 {
     [DbContext(typeof(TodoDbContext))]
-    [Migration("20260423210112_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20260522154445_DataSeed")]
+    partial class DataSeed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -236,6 +236,122 @@ namespace TodoApp.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TodoApp.Models.Data.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasComment("Unique identifier for the comment");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasComment("Content of the comment");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Timestamp when the comment was created");
+
+                    b.Property<Guid>("TodoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Identifier for the todo to which the comment belongs");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Timestamp when the comment was last updated");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TodoId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("TodoApp.Models.Data.Group", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Unique identifier for the group");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Timestamp when the group was created");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(500)")
+                        .HasComment("Description of the group");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Name of the group");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Timestamp when the group was last updated, Nullable");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Identifier of the user who owns the group");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Groups");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("67938441-4f26-429a-a328-828208f6f0e6"),
+                            CreatedOn = new DateTime(2026, 5, 22, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Tasks related to work and projects",
+                            Name = "Work Tasks",
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        },
+                        new
+                        {
+                            Id = new Guid("eb68a07e-7fc9-40e8-bdd4-ce5cd056fb51"),
+                            CreatedOn = new DateTime(2026, 5, 21, 11, 15, 0, 0, DateTimeKind.Unspecified),
+                            Description = "University assignments and exams",
+                            Name = "University",
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        },
+                        new
+                        {
+                            Id = new Guid("9ee30a53-b22e-40af-9171-077da6d5d34a"),
+                            CreatedOn = new DateTime(2026, 5, 20, 16, 45, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Gaming related tasks and goals",
+                            Name = "Gaming",
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        },
+                        new
+                        {
+                            Id = new Guid("b4c7c90c-2094-4b50-b3a0-3b123a1583f6"),
+                            CreatedOn = new DateTime(2026, 5, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Personal daily tasks",
+                            Name = "Personal",
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        },
+                        new
+                        {
+                            Id = new Guid("a1a1ab13-d1bc-4a25-8ba7-ca141db73f85"),
+                            CreatedOn = new DateTime(2026, 5, 18, 7, 20, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Fitness and health goals",
+                            Name = "Fitness",
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        });
+                });
+
             modelBuilder.Entity("TodoApp.Models.Data.TodoEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -254,13 +370,12 @@ namespace TodoApp.Data.Migrations
                         .HasColumnType("nvarchar(1000)")
                         .HasComment("Todo description");
 
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2")
+                    b.Property<DateOnly>("DueDate")
+                        .HasColumnType("date")
                         .HasComment("Todo due date");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit")
-                        .HasComment("Todo completion status");
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -268,6 +383,14 @@ namespace TodoApp.Data.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(150)")
                         .HasComment("Todo name");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int")
+                        .HasComment("Todo priority");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasComment("Todo status");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2")
@@ -278,9 +401,73 @@ namespace TodoApp.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GroupId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Todos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5259ecb1-ea01-4b61-82ac-5a50d5c3d6b1"),
+                            CreatedOn = new DateTime(2026, 5, 22, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Complete the ASP.NET Core API",
+                            DueDate = new DateOnly(2026, 5, 30),
+                            GroupId = new Guid("a1a1ab13-d1bc-4a25-8ba7-ca141db73f85"),
+                            Name = "Finish API",
+                            Priority = 0,
+                            Status = 0,
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        },
+                        new
+                        {
+                            Id = new Guid("9fc3138f-6c8d-47a8-b7b9-192e5df38c7e"),
+                            CreatedOn = new DateTime(2026, 5, 21, 14, 15, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Prepare for Signals and Systems exam",
+                            DueDate = new DateOnly(2026, 6, 5),
+                            GroupId = new Guid("a1a1ab13-d1bc-4a25-8ba7-ca141db73f85"),
+                            Name = "Study Signals",
+                            Priority = 1,
+                            Status = 0,
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        },
+                        new
+                        {
+                            Id = new Guid("af8c31f0-a176-427d-916e-8eb9bc1cb1e4"),
+                            CreatedOn = new DateTime(2026, 5, 20, 18, 45, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Play and stream Battlefield 1",
+                            DueDate = new DateOnly(2026, 5, 25),
+                            GroupId = new Guid("a1a1ab13-d1bc-4a25-8ba7-ca141db73f85"),
+                            Name = "Play Battlefield 1",
+                            Priority = 2,
+                            Status = 1,
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        },
+                        new
+                        {
+                            Id = new Guid("d35d20fb-d640-4095-90a4-a11a3cd7d608"),
+                            CreatedOn = new DateTime(2026, 5, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Buy food and drinks",
+                            DueDate = new DateOnly(2026, 5, 23),
+                            GroupId = new Guid("a1a1ab13-d1bc-4a25-8ba7-ca141db73f85"),
+                            Name = "Buy groceries",
+                            Priority = 1,
+                            Status = 0,
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        },
+                        new
+                        {
+                            Id = new Guid("142279f9-cc2c-4766-8a0e-c801174b4fdf"),
+                            CreatedOn = new DateTime(2026, 5, 18, 7, 20, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Complete cardio and strength training",
+                            DueDate = new DateOnly(2026, 5, 24),
+                            GroupId = new Guid("b4c7c90c-2094-4b50-b3a0-3b123a1583f6"),
+                            Name = "Morning workout",
+                            Priority = 0,
+                            Status = 0,
+                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -334,10 +521,21 @@ namespace TodoApp.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TodoApp.Models.Data.TodoEntity", b =>
+            modelBuilder.Entity("TodoApp.Models.Data.Comment", b =>
+                {
+                    b.HasOne("TodoApp.Models.Data.TodoEntity", "TodoEntity")
+                        .WithMany("Comments")
+                        .HasForeignKey("TodoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TodoEntity");
+                });
+
+            modelBuilder.Entity("TodoApp.Models.Data.Group", b =>
                 {
                     b.HasOne("TodoApp.Models.Data.ApplicationUser", "User")
-                        .WithMany("Todos")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -345,9 +543,38 @@ namespace TodoApp.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TodoApp.Models.Data.TodoEntity", b =>
+                {
+                    b.HasOne("TodoApp.Models.Data.Group", "Group")
+                        .WithMany("Todos")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TodoApp.Models.Data.ApplicationUser", "User")
+                        .WithMany("Todos")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TodoApp.Models.Data.ApplicationUser", b =>
                 {
                     b.Navigation("Todos");
+                });
+
+            modelBuilder.Entity("TodoApp.Models.Data.Group", b =>
+                {
+                    b.Navigation("Todos");
+                });
+
+            modelBuilder.Entity("TodoApp.Models.Data.TodoEntity", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

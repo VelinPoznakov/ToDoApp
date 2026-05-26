@@ -58,7 +58,7 @@ namespace TodoApp.Data.Seeder
             {
                 adminUser = new ApplicationUser
                 {
-                    UserName = email,
+                    UserName = "Velin666",
                     Email = email,
                     FirstName = "Velin",
                     LastName = "Poznakov"
