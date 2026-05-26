@@ -15,10 +15,13 @@ namespace TodoApp.Data
         }
 
         public virtual DbSet<TodoEntity> Todos { get; set; } = null!;
+        public virtual DbSet<Group> Groups { get; set; } = null!;
+        public virtual DbSet<Comment> Comments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfigurationsFromAssembly(typeof(TodoEntityConfigurations).Assembly);
+            builder.ApplyConfiguration(new GroupConfiguration());
+            builder.ApplyConfiguration(new TodoEntityConfiguration());
 
             base.OnModelCreating(builder);
         }

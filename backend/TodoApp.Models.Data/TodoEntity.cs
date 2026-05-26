@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using TodoApp.Models.Data.Enums;
 using static TodoApp.GCommon.ModelValidations.Todo;
 using static TodoApp.GCommon.ModelValidations.DataTypes;
 
@@ -25,15 +25,17 @@ namespace TodoApp.Models.Data
         [Unicode(true)]
         public string Description { get; set; } = null!;
 
+        [Comment("Todo priority")]
+        [Required]
+        public Priority Priority { get; set; }
+
+        [Comment("Todo status")]
+        [Required]
+        public Status Status { get; set; } = Status.Pending;
+
         [Comment("Todo due date")]
         [Required]
-        [Column(TypeName = DateTimeConstant)]
-        public DateTime DueDate { get; set; }
-
-        [Comment("Todo completion status")]
-        [Required]
-        [Column(TypeName = BoolDataTypeConstant)]
-        public bool IsCompleted { get; set; } = false;
+        public DateOnly DueDate { get; set; }
 
         [Comment("Todo creation date")]
         [Required]
@@ -47,5 +49,12 @@ namespace TodoApp.Models.Data
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         public virtual ApplicationUser User { get; set; } = null!;
+
+        [ForeignKey(nameof(Group))]
+        public Guid GroupId { get; set; }
+        public virtual Group Group { get; set; } = null!;
+
+        public virtual ICollection<Comment> Comments { get; set; }
+            = new List<Comment>();
     }
 }

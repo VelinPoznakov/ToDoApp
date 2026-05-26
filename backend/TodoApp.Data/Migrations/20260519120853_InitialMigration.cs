@@ -159,17 +159,41 @@ namespace TodoApp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Groups",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, comment: "Unique identifier for the group"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Name of the group"),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false, comment: "Description of the group"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, comment: "Identifier of the user who owns the group"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Timestamp when the group was created"),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Timestamp when the group was last updated, Nullable")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Groups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Groups_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Todos",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, comment: "Todo entity primary key"),
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false, comment: "Todo name"),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false, comment: "Todo description"),
-                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Todo due date"),
-                    IsCompleted = table.Column<bool>(type: "bit", nullable: false, comment: "Todo completion status"),
+                    Priority = table.Column<int>(type: "int", nullable: false, comment: "Todo priority"),
+                    Status = table.Column<int>(type: "int", nullable: false, comment: "Todo status"),
+                    DueDate = table.Column<DateOnly>(type: "date", nullable: false, comment: "Todo due date"),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Todo creation date"),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Todo last update date, Nullable"),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -178,6 +202,33 @@ namespace TodoApp.Data.Migrations
                         name: "FK_Todos_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Todos_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Unique identifier for the comment")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false, comment: "Content of the comment"),
+                    TodoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, comment: "Identifier for the todo to which the comment belongs"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Timestamp when the comment was created"),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Timestamp when the comment was last updated")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_Todos_TodoId",
+                        column: x => x.TodoId,
+                        principalTable: "Todos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -222,6 +273,21 @@ namespace TodoApp.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_TodoId",
+                table: "Comments",
+                column: "TodoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Groups_UserId",
+                table: "Groups",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Todos_GroupId",
+                table: "Todos",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Todos_UserId",
                 table: "Todos",
                 column: "UserId");
@@ -246,10 +312,16 @@ namespace TodoApp.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Todos");
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Todos");
+
+            migrationBuilder.DropTable(
+                name: "Groups");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
