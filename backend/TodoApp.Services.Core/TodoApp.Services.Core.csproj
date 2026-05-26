@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TodoApp.Data\TodoApp.Data.csproj" />
     <ProjectReference Include="..\TodoApp.Services.Dtos\TodoApp.Services.Dtos.csproj" />
   </ItemGroup>

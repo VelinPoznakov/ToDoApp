@@ -14,5 +14,9 @@
         public const string PasswordMinLengthError = "Password must be at least {1} characters long.";
 
         public const string PasswordsDoNotMatchError = "The password and confirmation password do not match.";
+
+        public const string TodoNameErrorMessage = "Todo name must be between {2} and {1} characters long.";
+        public const string TodoDescriptionErrorMessage = "Description must be between {2} and {1} characters long.";
+        public const string InvalidPriorityErrorMessage = "Please select a valid priority.";
     }
 }

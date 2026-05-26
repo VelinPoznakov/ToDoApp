@@ -96,6 +96,11 @@ namespace TodoApp
             app.MapStaticAssets();
 
             app.MapControllerRoute(
+                name: "Main",
+                pattern: "{area}/{controller=Home}/{action=Index}/{id?}"
+            ).WithStaticAssets();
+
+            app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
