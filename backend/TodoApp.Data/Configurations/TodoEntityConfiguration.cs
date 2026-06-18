@@ -19,7 +19,7 @@ public class TodoEntityConfiguration: IEntityTypeConfiguration<TodoEntity>
             Priority = Priority.High,
             Status = Status.Pending,
             DueDate = new DateOnly(2026, 5, 30),
-            UserId = Guid.Parse("E095D119-A99E-4FEC-D301-08DEB59F834F"),
+            UserId = Guid.Parse("07420943-635f-4cd8-8850-e0ce781094f2"),
             GroupId = Guid.Parse("a1a1ab13-d1bc-4a25-8ba7-ca141db73f85"),
             CreatedOn = new DateTime(2026, 5, 22, 10, 30, 0)
         },
@@ -31,7 +31,7 @@ public class TodoEntityConfiguration: IEntityTypeConfiguration<TodoEntity>
             Priority = Priority.Medium,
             Status = Status.Pending,
             DueDate = new DateOnly(2026, 6, 5),
-            UserId = Guid.Parse("E095D119-A99E-4FEC-D301-08DEB59F834F"),
+            UserId = Guid.Parse("07420943-635f-4cd8-8850-e0ce781094f2"),
             GroupId = Guid.Parse("a1a1ab13-d1bc-4a25-8ba7-ca141db73f85"),
             CreatedOn = new DateTime(2026, 5, 21, 14, 15, 0)
         },
@@ -43,7 +43,7 @@ public class TodoEntityConfiguration: IEntityTypeConfiguration<TodoEntity>
             Priority = Priority.Low,
             Status = Status.Completed,
             DueDate = new DateOnly(2026, 5, 25),
-            UserId = Guid.Parse("E095D119-A99E-4FEC-D301-08DEB59F834F"),
+            UserId = Guid.Parse("07420943-635f-4cd8-8850-e0ce781094f2"),
             GroupId = Guid.Parse("a1a1ab13-d1bc-4a25-8ba7-ca141db73f85"),
             CreatedOn = new DateTime(2026, 5, 20, 18, 45, 0)
         },
@@ -55,7 +55,7 @@ public class TodoEntityConfiguration: IEntityTypeConfiguration<TodoEntity>
             Priority = Priority.Medium,
             Status = Status.Pending,
             DueDate = new DateOnly(2026, 5, 23),
-            UserId = Guid.Parse("E095D119-A99E-4FEC-D301-08DEB59F834F"),
+            UserId = Guid.Parse("07420943-635f-4cd8-8850-e0ce781094f2"),
             GroupId = Guid.Parse("a1a1ab13-d1bc-4a25-8ba7-ca141db73f85"),
             CreatedOn = new DateTime(2026, 5, 19, 9, 0, 0)
         },
@@ -67,7 +67,7 @@ public class TodoEntityConfiguration: IEntityTypeConfiguration<TodoEntity>
             Priority = Priority.High,
             Status = Status.Pending,
             DueDate = new DateOnly(2026, 5, 24),
-            UserId = Guid.Parse("E095D119-A99E-4FEC-D301-08DEB59F834F"),
+            UserId = Guid.Parse("07420943-635f-4cd8-8850-e0ce781094f2"),
             GroupId = Guid.Parse("b4c7c90c-2094-4b50-b3a0-3b123a1583f6"),
             CreatedOn = new DateTime(2026, 5, 18, 7, 20, 0)
     }

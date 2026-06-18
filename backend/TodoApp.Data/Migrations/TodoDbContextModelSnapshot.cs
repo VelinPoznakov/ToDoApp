@@ -313,7 +313,7 @@ namespace TodoApp.Data.Migrations
                             CreatedOn = new DateTime(2026, 5, 22, 8, 30, 0, 0, DateTimeKind.Unspecified),
                             Description = "Tasks related to work and projects",
                             Name = "Work Tasks",
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         },
                         new
                         {
@@ -321,7 +321,7 @@ namespace TodoApp.Data.Migrations
                             CreatedOn = new DateTime(2026, 5, 21, 11, 15, 0, 0, DateTimeKind.Unspecified),
                             Description = "University assignments and exams",
                             Name = "University",
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         },
                         new
                         {
@@ -329,7 +329,7 @@ namespace TodoApp.Data.Migrations
                             CreatedOn = new DateTime(2026, 5, 20, 16, 45, 0, 0, DateTimeKind.Unspecified),
                             Description = "Gaming related tasks and goals",
                             Name = "Gaming",
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         },
                         new
                         {
@@ -337,7 +337,7 @@ namespace TodoApp.Data.Migrations
                             CreatedOn = new DateTime(2026, 5, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Personal daily tasks",
                             Name = "Personal",
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         },
                         new
                         {
@@ -345,7 +345,7 @@ namespace TodoApp.Data.Migrations
                             CreatedOn = new DateTime(2026, 5, 18, 7, 20, 0, 0, DateTimeKind.Unspecified),
                             Description = "Fitness and health goals",
                             Name = "Fitness",
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         });
                 });
 
@@ -415,7 +415,7 @@ namespace TodoApp.Data.Migrations
                             Name = "Finish API",
                             Priority = 0,
                             Status = 0,
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         },
                         new
                         {
@@ -427,7 +427,7 @@ namespace TodoApp.Data.Migrations
                             Name = "Study Signals",
                             Priority = 1,
                             Status = 0,
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         },
                         new
                         {
@@ -439,7 +439,7 @@ namespace TodoApp.Data.Migrations
                             Name = "Play Battlefield 1",
                             Priority = 2,
                             Status = 1,
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         },
                         new
                         {
@@ -451,7 +451,7 @@ namespace TodoApp.Data.Migrations
                             Name = "Buy groceries",
                             Priority = 1,
                             Status = 0,
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         },
                         new
                         {
@@ -463,7 +463,7 @@ namespace TodoApp.Data.Migrations
                             Name = "Morning workout",
                             Priority = 0,
                             Status = 0,
-                            UserId = new Guid("e095d119-a99e-4fec-d301-08deb59f834f")
+                            UserId = new Guid("07420943-635f-4cd8-8850-e0ce781094f2")
                         });
                 });
 

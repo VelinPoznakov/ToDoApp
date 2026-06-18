@@ -7,7 +7,7 @@ namespace TodoApp.Data.Repositories;
 
 public class GroupRepository: BaseRepository, IGroupRepository
 {
-    protected GroupRepository(TodoDbContext dbContext) : base(dbContext)
+    public GroupRepository(TodoDbContext dbContext) : base(dbContext)
     {
     }
 

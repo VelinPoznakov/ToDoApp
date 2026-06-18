@@ -7,7 +7,7 @@ namespace TodoApp.Data.Repositories;
 
 public class TodoRepository: BaseRepository, ITodoRepository
 {
-    protected TodoRepository(TodoDbContext dbContext) : base(dbContext)
+    public TodoRepository(TodoDbContext dbContext) : base(dbContext)
     {
     }
 
@@ -45,8 +45,7 @@ public class TodoRepository: BaseRepository, ITodoRepository
         if (filterQuery != null)
         {
             todos = todos
-                .Where(filterQuery)
-                .AsQueryable();
+                .Where(filterQuery);
         }
 
         if (projectionQuery != null)
@@ -74,6 +73,7 @@ public class TodoRepository: BaseRepository, ITodoRepository
         {
             todoQuery = todoQuery
                 .AsNoTracking()
+                .Include(g => g.Group)
                 .Include(t => t.Comments);
         }
 
