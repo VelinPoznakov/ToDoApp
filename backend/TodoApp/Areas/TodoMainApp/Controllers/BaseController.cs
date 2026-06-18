@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace TodoApp.Areas.TodoMainApp.Controllers
 {
+    [Area("TodoMainApp")]
     [Authorize]
     [AutoValidateAntiforgeryToken]
-    public class BaseController : Controller
+    public abstract class BaseController : Controller
     {
         public string? GetUserId()
         {

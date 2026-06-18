@@ -12,4 +12,5 @@ public interface ITodoService
     Task DeleteTodoAsync(Guid userId, Guid todoId);
     Task<int> CountTodos(Guid userId, bool filter = false);
     Task<IEnumerable<TodosAfterDuelDate>> GetTodosAfterDueDate(Guid userId);
+    Task CompleteTodo(Guid todoId, Guid userId);
 }

@@ -9,6 +9,14 @@ namespace TodoApp.Controllers
     {
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(
+                    "Index",
+                    "Dashboard",
+                    new { area = "TodoMainApp" });
+            }
+
             return View();
         }
 

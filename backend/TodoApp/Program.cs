@@ -3,10 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApp.Data;
+using TodoApp.Data.Repositories;
+using TodoApp.Data.Repositories.Contracts;
 using TodoApp.Data.Seeder;
 using TodoApp.Data.Seeder.Contracts;
 using TodoApp.GCommon.Exceptions;
 using TodoApp.Models.Data;
+using TodoApp.Services.Core;
+using TodoApp.Services.Core.Contracts;
 using TodoApp.Web.Infrastructure;
 using static TodoApp.Web.Infrastructure.IdentityConfiguration;
 
@@ -20,14 +24,20 @@ namespace TodoApp
 
             // Add services to the container.
             string? connectionString = builder
-                .Configuration
-                .GetConnectionString("DevSqlServer")
-                ?? throw new ConnectionStringNotFound("Connection string is not found");
+                                           .Configuration
+                                           .GetConnectionString("DevSqlServer")
+                                       ?? throw new ConnectionStringNotFound("Connection string is not found");
 
             builder.Services.AddDbContext<TodoDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+            builder.Services.AddScoped<ITodoRepository, TodoRepository>();
+            builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+
+            builder.Services.AddScoped<ITodoService, TodoService>();
+            builder.Services.AddScoped<IGroupService, GroupService>();
 
             builder.Services.AddTransient<IIdentitySeeder, IdentitySeeder>();
 
@@ -95,18 +105,19 @@ namespace TodoApp
 
             app.MapStaticAssets();
 
-            app.MapControllerRoute(
-                name: "Main",
-                pattern: "{area}/{controller=Home}/{action=Index}/{id?}"
+            app.MapAreaControllerRoute(
+                name: "Todos",
+                areaName: "TodoMainApp",
+                pattern: "Todos/{controller=Dashboard}/{action=Index}/{id?}"
             ).WithStaticAssets();
 
             app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.MapRazorPages()
-               .WithStaticAssets();
+                .WithStaticAssets();
 
             app.Run();
         }

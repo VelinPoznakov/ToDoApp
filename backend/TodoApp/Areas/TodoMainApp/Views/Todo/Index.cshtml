@@ -1,5 +1,72 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using TodoApp.Models.Todo
+@model IEnumerable<TodoViewModel>
 @{
+
+    Guid groupId = Guid.Parse(TempData.Peek("groupId")!.ToString()!);
+
 }
+
+
+<div>
+    
+    GROUP NAME
+    
+    <a asp-area="TodoMainApp"
+       asp-controller="Todo"
+       asp-action="Completed"
+       asp-route-id="@groupId">Completed</a>
+    
+    <div>
+        <div>
+            <p>Title</p>
+            <p>Priority</p>
+            <p>Status</p>
+            <p>DueDate</p>
+        </div>
+        
+        <div>
+            
+            @foreach (TodoViewModel todo in Model)
+            {
+                <div>
+                    <a asp-area="TodoMainApp"
+                       asp-controller="Todo"
+                       asp-action="Complete"
+                       asp-route-id="@todo.Id">Complete</a>
+
+                    <a
+                        asp-area="TodoMainApp"
+                        asp-controller="Todo"
+                        asp-action="Details"
+                        asp-route-id="@todo.Id">
+
+                        <p>@todo.Name</p>
+                        <p>@todo.Priority</p>
+                        <p>@todo.Status</p>
+                        <p>@todo.DueDate</p>
+                    </a>
+                    <div>
+                        <a asp-area="TodoMainApp"
+                           asp-controller="Todo"
+                           asp-action="Edit"
+                           asp-route-id="@todo.Id">Edit</a>
+
+                        <a asp-area="TodoMainApp"
+                           asp-controller="Todo"
+                           asp-action="Delete"
+                           asp-route-id="@todo.Id">Delete</a>
+                    </div>
+                </div>
+            }
+
+        </div>
+        
+
+    </div>
+
+    
+
+    
+    
+
+</div>

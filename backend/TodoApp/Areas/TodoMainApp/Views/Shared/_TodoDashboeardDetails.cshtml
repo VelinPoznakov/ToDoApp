@@ -1,0 +1,17 @@
+﻿@using TodoApp.Models.Todo
+@model TodoWithGroupNameViewModel
+
+@{
+}
+
+<a asp-area="TodoMainApp"
+   asp-controller="Todo"
+   asp-action="Details"
+   asp-route-id="@Model.Id">
+        <p>@Model.Status</p>
+        <p>@Model.Priority</p>
+        <p>@Model.GroupName</p>
+        <p>@Model.DueDate</p>
+        <p>actions</p>
+</a>
+

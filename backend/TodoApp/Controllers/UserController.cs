@@ -25,7 +25,7 @@ namespace TodoApp.Controllers
         {
             if (signInManager.IsSignedIn(User))
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard", new { area = "TodoMainApp" });
             }
 
             RegisterViewModel model = new RegisterViewModel();
@@ -78,7 +78,7 @@ namespace TodoApp.Controllers
                     return LocalRedirect(returnUrl);
                 }
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard", new { area = "TodoMainApp" });
             }
             catch (Exception ex)
             {
@@ -96,7 +96,7 @@ namespace TodoApp.Controllers
         {
             if (signInManager.IsSignedIn(User))
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard", new { area = "TodoMainApp" });
             }
 
             LogInViewModel model = new LogInViewModel();
@@ -132,7 +132,7 @@ namespace TodoApp.Controllers
                             return LocalRedirect(returnUrl);
                         }
 
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Dashboard", new { area = "TodoMainApp" });
                     }
 
                     if (result.IsLockedOut)

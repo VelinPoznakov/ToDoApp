@@ -1,5 +1,49 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using TodoApp.Models.Todo
+@model IEnumerable<TodoViewModel>
+
 @{
 }
+
+<div>
+    <h2>Completed</h2>
+    
+    <div>
+        <div>
+            <p>Name</p>
+            <p>Priority</p>
+            <p>Status</p>
+            <p>Due Date</p>
+        </div>
+
+        @if (Model.Any())
+        {
+            foreach (TodoViewModel todo in Model)
+            {
+                <div>
+                    <a asp-area="TodoMainApp"
+                       asp-controller="Todo"
+                       asp-action="Activate"
+                       asp-route-id="@todo.Id">Activate</a>
+
+                    <a
+                        asp-area="TodoMainApp"
+                        asp-controller="Todo"
+                        asp-action="Details"
+                        asp-route-id="@todo.Id">
+
+                        <p>@todo.Name</p>
+                        <p>@todo.Priority</p>
+                        <p>@todo.Status</p>
+                        <p>@todo.DueDate</p>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Nothing is completed</p>
+        }
+
+
+    </div>
+</div>

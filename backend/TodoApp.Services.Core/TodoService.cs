@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using TodoApp.Data.Repositories;
+using TodoApp.Data.Repositories.Contracts;
 using TodoApp.GCommon.Exceptions;
 using TodoApp.Models.Data;
 using TodoApp.Models.Data.Enums;
@@ -12,9 +12,9 @@ namespace TodoApp.Services.Core;
 
 public class TodoService: ITodoService
 {
-    private readonly TodoRepository _todoRepository;
+    private readonly ITodoRepository _todoRepository;
 
-    public TodoService(TodoRepository todoRepository)
+    public TodoService(ITodoRepository todoRepository)
     {
         _todoRepository = todoRepository;
     }
@@ -91,7 +91,7 @@ public class TodoService: ITodoService
             
         };
 
-        if (track)
+        if (!track)
         {
             result.CreatedOn = DateOnly.FromDateTime(todoEntity.CreatedOn).ToString(DateFormat);
             result.GroupName = todoEntity.Group.Name;
@@ -246,5 +246,28 @@ public class TodoService: ITodoService
         });
 
         return result;
+    }
+
+    public async Task CompleteTodo(Guid todoId, Guid userId)
+    {
+        Expression<Func<TodoEntity, bool>> filter = t => t.Id == todoId && t.UserId == userId;
+
+        TodoEntity? todo = await _todoRepository
+            .GetTodoAsync(filterQuery: filter, tracking: true);
+
+        if (todo == null)
+        {
+            throw new EntityNotFoundException();
+        }
+
+        todo.Status = Status.Completed;
+
+        bool edited = await _todoRepository
+            .EditTodoAsync(todo);
+
+        if (!edited)
+        {
+            throw new DataPersistFail();
+        }
     }
 }

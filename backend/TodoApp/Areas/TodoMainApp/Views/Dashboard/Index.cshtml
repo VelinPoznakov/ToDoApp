@@ -1,5 +1,95 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IndexDashboardViewModel
 @{
+    int counter = 0;
 }
+
+
+<div>
+    
+    <div>
+        <h3>Dashboard</h3>
+        <p>Overview of your tasks</p>
+    </div>
+    
+    <div>
+        
+        <a asp-controller="Groups" asp-action="Index">
+            ICON
+            
+            <div>
+                <p>Groups</p>
+                <h3>@Model.CountGroups</h3>
+                <p>All groups</p>
+            </div>
+        </a>
+        
+        <a>
+            ICON
+            
+            <div>
+                <p>Pending</p>
+                <h3>@Model.CountPendingTodos</h3>
+                <p>All pending todos</p>
+            </div>
+        </a>
+        
+        <a>
+            ICON
+            
+            <div>
+                <p>Completed</p>
+                <h3>@Model.CountCompletedTodos</h3>
+                <p>All completed todos</p>
+            </div>
+        </a>
+
+    </div>
+    
+    <div>
+        
+        <div>
+            <h4>Due Date</h4>
+            <h4><a asp-action="" asp-controller="" asp-area="">View All</a></h4>
+        </div>
+        
+        @if (Model.Todos.Count() != 0)
+        {
+            <div>
+                <p>Title</p>
+                <p>Status</p>
+                <p>Priority</p>
+                <p>Group</p>
+                <p>Due Date</p>
+                <p>Actions</p>
+            </div>
+
+            @if (Model.Todos.Count() <= 5)
+            {
+                foreach (var todo in Model.Todos)
+                {
+                    <partial name="_TodoDashboeardDetails" model="@todo" />
+                }
+            }
+            else
+            {
+                foreach (var todo in Model.Todos)
+                {
+                    if (counter >= 5)
+                    { 
+                        break;
+                    }
+
+                    <partial name="_TodoDashboeardDetails" model="@todo" />
+
+                    counter++;
+                }
+            }
+        }
+        else
+        {
+            <h2>No Assignments After Due Date</h2>
+        }
+
+    </div>
+
+</div>
