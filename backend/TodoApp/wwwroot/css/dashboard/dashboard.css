@@ -1,0 +1,128 @@
+:root{
+    font-size:1rem;
+}
+
+.dashboard-page{
+    padding:1rem 1.25rem;
+    background-color: #F5F6FA; /* use site background */
+}
+
+/* Header */
+.page-header{
+    margin-bottom:1.25rem;
+}
+.page-header__title{
+    margin:0;
+    font-size:1.25rem;
+    color:#111827;
+    font-weight:700;
+}
+.page-header__subtitle{
+    margin:0.25rem 0 0 0;
+    color:#6b7280;
+    font-size:0.9375rem;
+}
+
+/* Stats row */
+.stats-row{
+    display:flex;
+    gap:1rem;
+    align-items:stretch;
+    margin-bottom:1.5rem;
+    flex-wrap:wrap;
+}
+
+.stat-card{
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+    background:#ffffff;
+    padding:1rem;
+    border-radius:0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(15,23,42,0.04);
+    border: 0.0625rem solid rgba(15,23,42,0.04);
+    min-width: 12rem;
+    flex:1 1 18rem;
+    text-decoration:none;
+}
+
+.stat-card__icon{
+    display:inline-flex;
+    width:2.25rem;
+    height:2.25rem;
+    align-items:center;
+    justify-content:center;
+    border-radius:0.6rem;
+    background: rgba(108,76,255,0.08);
+    flex-shrink:0;
+}
+
+.stat-card__content{
+    display:flex;
+    flex-direction:column;
+}
+
+.stat-card__title{
+    margin:0;
+    font-size:0.875rem;
+    color:#6b7280;
+}
+
+.stat-card__value{
+    margin:0.25rem 0 0 0;
+    font-size:1.5rem;
+    color:#111827;
+}
+
+.stat-card__desc{
+    margin:0.25rem 0 0 0;
+    color:#9CA3AF;
+    font-size:0.8125rem;
+}
+
+/* Todos section */
+.todos-section{
+    background: white;
+    padding:1rem;
+    border-radius:0.75rem;
+    border: 0.0625rem solid rgba(15,23,42,0.04);
+}
+
+.todos-section__head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:1rem;
+}
+
+.todos-section__title{
+    margin:0;
+    font-size:1rem;
+    color:#111827;
+    font-weight:600;
+}
+
+.todos-table__head{
+    display:grid;
+    grid-template-columns: 2fr 1fr 0.8fr 1fr 1fr 0.6fr;
+    gap:0.75rem;
+    padding:0.75rem 0;
+    color:#6b7280;
+    font-size:0.875rem;
+    border-bottom: 0.0625rem solid rgba(15,23,42,0.04);
+}
+
+.todos-col{
+    margin:0;
+}
+
+ /*responsive adjustments */
+@media (max-width:64rem){
+    .stat-card__icon{width:2rem;height:2rem}
+    .stat-card__value{font-size:1.25rem}
+}
+
+@media (max-width:48rem){
+    .stats-row{flex-direction:column}
+    .todos-table__head{grid-template-columns:1fr 1fr 1fr}
+}

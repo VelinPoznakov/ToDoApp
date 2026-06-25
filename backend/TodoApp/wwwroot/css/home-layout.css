@@ -3,3 +3,16 @@
     flex-direction: row;
 
 }
+
+/* make the main content area take remaining space beside the sidebar */
+.main-sections > div {
+    flex: 1 1 auto;
+    padding: 1.25rem; /* match dashboard spacing */
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* ensure body background matches main-page */
+body {
+    background-color: #F5F6FA;
+}
