@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TodoApp.Models;
 using TodoApp.Models.Todo;
 using TodoApp.Services.Core.Contracts;

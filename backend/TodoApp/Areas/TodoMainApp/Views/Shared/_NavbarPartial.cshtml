@@ -1,18 +1,22 @@
 ﻿@{
 }
 
-<nav>
-    LOGO
-    <div>
-        <a asp-area="TodoMainApp" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-        <a asp-area="TodoMainApp" asp-controller="Groups" asp-action="Index">My Groups</a>
-        <a href="">Create Group</a>
-        <a>Support</a>
-
-        <a asp-area="" asp-controller="User" asp-action="Logout">Logout</a>
+<nav class="sidebar-nav">
+    <div class="nav-brand">
+        <img src="~/photos/main-navbar-logo.png" alt="AppIcon"/>
+        <h2>To Do App</h2>
     </div>
     
-    <div>
+    <div class="nav-items">
+        <a class="nav-link nav-link--active" asp-area="TodoMainApp" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+        <a class="nav-link" asp-area="TodoMainApp" asp-controller="Groups" asp-action="Index">My Groups</a>
+        <a class="nav-link" href="">Create Group</a>
+        <a class="nav-link">Support</a>
+
+        <a class="nav-link nav-link--danger" asp-area="" asp-controller="User" asp-action="Logout">Logout</a>
+    </div>
+    
+    <div class="nav-profile">
         Profile
     </div>
 
