@@ -5,7 +5,7 @@ using static TodoApp.GCommon.ModelsErrorMessages;
 
 namespace TodoApp.Models.Todo;
 
-public class CreateEditViewModel
+public class CreateEditViewModel: IValidatableObject
 {
     [Required]
     [StringLength(NameMaxLength,
@@ -30,4 +30,12 @@ public class CreateEditViewModel
         "Medium",
         "Low"
     };
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (DateOnly.FromDateTime(DateTime.Now) > this.DueDate)
+        {
+            yield return new ValidationResult("Enter valid date", new[] { nameof(DueDate) });
+        }
+    }
 }
