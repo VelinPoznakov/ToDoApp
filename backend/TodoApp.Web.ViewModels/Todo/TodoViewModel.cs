@@ -1,4 +1,4 @@
-﻿namespace TodoApp.Models.Todo;
+﻿namespace TodoApp.Web.ViewModels.Todo;
 
 public class TodoViewModel
 {

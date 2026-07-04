@@ -1,4 +1,6 @@
-﻿namespace TodoApp.Models.Todo;
+﻿using TodoApp.Web.ViewModels.Todo;
+
+namespace TodoApp.Models.Todo;
 
 public class TodoWithGroupNameViewModel: TodoViewModel
 {
