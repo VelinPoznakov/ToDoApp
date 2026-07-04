@@ -1,17 +1,30 @@
-﻿@using TodoApp.Models.Todo
+@using TodoApp.Models.Todo
 @model TodoWithGroupNameViewModel
 
-@{
-}
-
-<a asp-area="TodoMainApp"
-   asp-controller="Todo"
-   asp-action="Details"
-   asp-route-id="@Model.Id">
-        <p>@Model.Status</p>
-        <p>@Model.Priority</p>
-        <p>@Model.GroupName</p>
-        <p>@Model.DueDate</p>
-        <p>actions</p>
-</a>
-
+<div class="todo-row">
+        <a class="todo-row__title"
+           asp-area="TodoMainApp"
+           asp-controller="Todo"
+           asp-action="Details"
+           asp-route-id="@Model.Id">@Model.Name</a>
+        <p class="todo-row__status todo-row__status--@(Model.Status?.ToLower())" data-label="Status">@Model.Status</p>
+        <p class="todo-row__priority todo-row__priority--@(Model.Priority?.ToLower())" data-label="Priority">@Model.Priority</p>
+        <p class="todo-row__group" data-label="Group">@Model.GroupName</p>
+        <p class="todo-row__due" data-label="Due Date">@Model.DueDate</p>
+        <p class="todo-row__actions">
+            <button type="button" class="todo-action todo-action--edit" aria-label="Edit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                </svg>
+            </button>
+            <button type="button" class="todo-action todo-action--delete" aria-label="Delete">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
+            </button>
+        </p>
+</div>

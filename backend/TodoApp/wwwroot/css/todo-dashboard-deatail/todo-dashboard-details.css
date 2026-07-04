@@ -1,0 +1,157 @@
+:root{
+    --brand:#6C4CFF;
+    --text-dark:#111827;
+    --text-muted:#6b7280;
+    --row-border:rgba(15,23,42,0.05);
+    --row-hover:rgba(108,76,255,0.05);
+}
+
+/* Row — same grid template + gap as .todos-table__head so columns line up */
+.todo-row{
+    position:relative;
+    display:grid;
+    grid-template-columns: 2fr 1fr 0.9fr 1fr 1fr 0.7fr;
+    gap:0.75rem;
+    align-items:center;
+    padding:0.875rem 0;
+    border-bottom:0.0625rem solid var(--row-border);
+    color:var(--text-dark);
+    cursor:pointer;
+    transition:background-color 0.18s ease;
+}
+
+.todo-row:hover{
+    background-color:var(--row-hover);
+}
+
+.todo-row p{
+    margin:0;
+    font-size:0.875rem;
+}
+
+/* Title — the prominent first column (now a link to Details) */
+.todo-row__title{
+    display:block;
+    min-width:0;
+    font-weight:600;
+    font-size:0.875rem;
+    color:var(--text-dark);
+    text-decoration:none;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+/* Stretched link — makes the whole row open Details via the title link */
+.todo-row__title::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:1;
+}
+.todo-row:hover .todo-row__title{
+    color:var(--brand);
+}
+
+.todo-row__group,
+.todo-row__due{
+    color:var(--text-muted);
+}
+
+/* Status — coloured text per value */
+.todo-row__status{
+    font-weight:600;
+}
+.todo-row__status--pending{ color:#F59E0B; }
+.todo-row__status--completed{ color:#10B981; }
+
+/* Priority — coloured text per value */
+.todo-row__priority{
+    font-weight:600;
+}
+.todo-row__priority--high{ color:#EF4444; }
+.todo-row__priority--medium{ color:#F59E0B; }
+.todo-row__priority--low{ color:#10B981; }
+
+/* Actions — edit / delete icons (must fit inside the 0.7fr cell) */
+.todo-row__actions{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    gap:0.375rem;
+    min-width:0;
+    overflow:hidden;
+}
+.todo-action{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:1.75rem;
+    height:1.75rem;
+    flex-shrink:0;
+    padding:0;
+    background:none;
+    border:none;
+    border-radius:0.375rem;
+    cursor:pointer;
+    transition:transform 0.15s ease, background-color 0.15s ease;
+}
+.todo-action svg{
+    width:1.125rem;
+    height:1.125rem;
+}
+.todo-action--edit:hover{ background:rgba(59,130,246,0.12); }
+.todo-action--delete:hover{ background:rgba(239,68,68,0.12); }
+.todo-action--edit{ color:#3B82F6; }
+.todo-action--delete{ color:#EF4444; }
+
+/* Mobile — each row becomes a stacked card so every value shows in full */
+@media (max-width:48rem){
+    .todo-row{
+        display:flex;
+        flex-direction:column;
+        gap:0.5rem;
+        padding:1rem;
+        margin-bottom:0.75rem;
+        border:0.0625rem solid var(--row-border);
+        border-radius:0.625rem;
+        text-align:center;
+    }
+
+    /* full text — no truncation */
+    .todo-row p,
+    .todo-row__title{
+        overflow:visible;
+        text-overflow:clip;
+        white-space:normal;
+    }
+
+    .todo-row__title{
+        font-size:1rem;
+    }
+
+    /* property rows: muted label on the left, value on the right */
+    .todo-row__status,
+    .todo-row__priority,
+    .todo-row__group,
+    .todo-row__due{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:0.5rem;
+    }
+    .todo-row__status::before,
+    .todo-row__priority::before,
+    .todo-row__group::before,
+    .todo-row__due::before{
+        content:attr(data-label);
+        color:var(--text-muted);
+        font-weight:500;
+    }
+
+    .todo-row__actions{
+        justify-content:center;
+        gap:0.5rem;
+        overflow:visible;
+    }
+}
