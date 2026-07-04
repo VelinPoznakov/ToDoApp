@@ -124,11 +124,16 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                 return BadRequest();
             }
 
-            return View();
+            ViewData["groupId"] = id;
+
+            return View(new CreateEditViewModel()
+            {
+                DueDate = DateOnly.FromDateTime(DateTime.Today)
+            });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromQuery] Guid id, [FromForm] CreateEditViewModel model)
+        public async Task<IActionResult> Create([FromRoute] Guid id, [FromForm] CreateEditViewModel model)
         {
             Guid userId = Guid.Parse(GetUserId()!);
 
@@ -138,6 +143,8 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
             {
                 return BadRequest();
             }
+
+            ViewData["groupId"] = id;
 
             if (!model.Priorities.Contains(model.Priority))
             {
@@ -178,7 +185,7 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                 return View(model);
             }
 
-            return RedirectToAction(nameof(Index), new{groupId = id});
+            return RedirectToAction(nameof(Index), new { id = id });
         }
 
         [HttpGet]
