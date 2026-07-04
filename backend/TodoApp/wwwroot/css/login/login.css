@@ -1,123 +1,226 @@
-﻿.ctr {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90vh;
-    margin: 0;
-    background-color: #F5F6FA;
+:root{
+    --brand:#6C4CFF;
+    --brand-dark:#5b3df0;
+    --page-bg:#F5F6FA;
+    --text-dark:#1f2937;
+    --text-muted:#9ca3af;
+    --label:#4b5563;
+    --input-bg:#F7F8FA;
+    --input-border:#E5E7EB;
+    --error:#ef4444;
 }
 
-.login-form {
-    display: flex;
-    flex-direction: column;
-    width: 20%;
-    gap: 1em;
-    padding: 4.5em 2em 1.5em 2em;
-    position: relative;
-    background-color: white;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    border-radius: 7px;
+html, body{
+    min-height:100%;
+}
+body{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+body > div{
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
 }
 
-.login-photo {
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 120px;
+.auth-page{
+    flex:1 1 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem 1rem;
+    background-color:var(--page-bg);
 }
 
-.text {
-    font-size: 14px;
+.auth-card{
+    width:100%;
+    max-width:25rem;
+    padding:2.5rem 2rem;
+    background:#fff;
+    border-radius:1rem;
+    box-shadow:0 1.25rem 3rem rgba(17,24,39,0.12);
 }
 
-.label {
-    font-weight: bold;
+/* Illustration */
+.auth-card__illustration{
+    display:flex;
+    justify-content:center;
+    margin-bottom:1rem;
+}
+.auth-illustration{
+    width:5rem;
+    height:auto;
 }
 
-input {
-    border-radius: 5px;
-    border: 1px solid #caccd3;
+/* Heading */
+.auth-form__head{
+    margin-bottom:1.5rem;
+    text-align:center;
+}
+.auth-form__title{
+    margin:0;
+    font-size:1.5rem;
+    font-weight:700;
+    color:var(--text-dark);
+}
+.auth-form__subtitle{
+    margin:0.35rem 0 0;
+    font-size:0.9rem;
+    color:var(--text-muted);
 }
 
-input:focus {
-    outline: none;
-    border-color: #caccd3;
+/* Form */
+.auth-form{
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+}
+.auth-form__summary{
+    color:var(--error);
+    font-size:0.85rem;
+}
+.auth-form__summary.validation-summary-valid{
+    display:none;
 }
 
-h3 {
-    font-size: 23px;
-    font-weight: bold;
+.form-field{
+    display:flex;
+    flex-direction:column;
+    gap:0.35rem;
+    min-width:0;
+}
+.form-field__label{
+    font-size:0.8rem;
+    font-weight:600;
+    color:var(--label);
+}
+.form-field__input{
+    width:100%;
+    padding:0.6rem 0.75rem;
+    font-size:0.9rem;
+    color:var(--text-dark);
+    background:var(--input-bg);
+    border:0.0625rem solid var(--input-border);
+    border-radius:0.5rem;
+    transition:border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.form-field__input::placeholder{
+    color:#b6bcc6;
+}
+.form-field__input:focus{
+    outline:none;
+    border-color:var(--brand);
+    background:#fff;
+    box-shadow:0 0 0 0.1875rem rgba(108,76,255,0.15);
 }
 
-.header-ctr {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5em;
+/* Password field with eye toggle */
+.form-field__control{
+    position:relative;
+    display:flex;
+    align-items:center;
+}
+.form-field__control .form-field__input{
+    padding-right:2.5rem;
+}
+.form-field__toggle{
+    position:absolute;
+    right:0.5rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:1.75rem;
+    height:1.75rem;
+    padding:0;
+    border:none;
+    background:none;
+    color:#9ca3af;
+    cursor:pointer;
+    transition:color 0.15s ease;
+}
+.form-field__toggle:hover,
+.form-field__toggle.is-visible{
+    color:var(--brand);
 }
 
-.field-ctr {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3em;
+.form-field__error{
+    font-size:0.78rem;
+    color:var(--error);
+}
+.form-field__error:empty{
+    display:none;
 }
 
-.text-ctr {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+/* Remember me / Forgot password row */
+.auth-form__options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.5rem 1rem;
+    justify-content:space-between;
+    align-items:center;
+    font-size:0.85rem;
+}
+.auth-form__remember{
+    display:inline-flex;
+    align-items:center;
+    gap:0.45rem;
+    color:var(--label);
+    cursor:pointer;
+}
+.auth-form__remember input{
+    width:1rem;
+    height:1rem;
+    accent-color:var(--brand);
+    cursor:pointer;
+}
+.auth-form__forgot{
+    color:var(--brand);
+    font-weight:500;
+    text-decoration:none;
+}
+.auth-form__forgot:hover{
+    text-decoration:underline;
 }
 
-.link-text {
-    text-decoration: none;
-    color: #6C4CFF;
+/* Submit + footer */
+.auth-form__submit{
+    margin-top:0.25rem;
+    padding:0.75rem;
+    font-size:0.95rem;
+    font-weight:600;
+    color:#fff;
+    background:var(--brand);
+    border:none;
+    border-radius:0.5rem;
+    cursor:pointer;
+    transition:background-color 0.15s ease, transform 0.05s ease;
+}
+.auth-form__submit:hover{
+    background:var(--brand-dark);
+}
+.auth-form__submit:active{
+    transform:translateY(0.0625rem);
 }
 
-.bottom-text-ctr {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-    flex-wrap: wrap;
+.auth-form__alt{
+    margin:0.25rem 0 0;
+    text-align:center;
+    font-size:0.85rem;
+    color:var(--text-muted);
+}
+.auth-form__alt a{
+    color:var(--brand);
+    font-weight:600;
+    text-decoration:none;
+}
+.auth-form__alt a:hover{
+    text-decoration:underline;
 }
 
-#email, #password {
-    padding: 0.5em;
-}
-
-.login-btn {
-    padding: 0.8em;
-    background-color: #6C4CFF;
-    border: none;
-    border-radius: 8px;
-    color: white;
-}
-
-@media screen and (max-width: 742px) {
-    .login-form {
-        width: 75%;
-    }
-
-    .text-ctr {
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .bottom-text-ctr {
-        flex-direction: column;
-        align-items: center;
-    }
-}
-
-@media (max-width: 1200px) and (min-width: 650px) {
-    .login-form {
-        width: 40%;
-    }
-
-    .text-ctr {
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
+/* ===== Mobile ===== */
+@media (max-width:30rem){
+    .auth-card{
+        padding:2rem 1.25rem;
     }
 }

@@ -1,59 +1,101 @@
-﻿@model LogInViewModel
+@model LogInViewModel
 
 @{
     ViewData["Title"] = "Log in";
 }
+
 @section Styles {
     <link rel="stylesheet" href="~/css/login/login.css" asp-append-version="true" />
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
-            <form asp-controller ="User"
-                asp-action="Login"
-                asp-route-returnUrl="@ViewData["ReturnUrl"]"
-                method="post">
+<div class="auth-page">
+    <div class="auth-card">
 
-                <h2>Use a local account to log in.</h2>
-                <hr />
+        <div class="auth-card__illustration">
+            <svg class="auth-illustration" viewBox="0 0 260 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Checklist illustration">
+                <rect x="64" y="40" width="104" height="138" rx="14" fill="#ffffff" stroke="#6C4CFF" stroke-width="3"/>
+                <rect x="98" y="30" width="36" height="20" rx="7" fill="#6C4CFF"/>
 
-                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <rect x="80" y="72" width="18" height="18" rx="5" fill="#6C4CFF"/>
+                <path d="M84 81 l3 3 l6 -7" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="106" y="76" width="50" height="6" rx="3" fill="#D9D2FB"/>
 
-                <div class="form-floating mb-3">
-                    <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label asp-for="Email" class="form-label">Email</label>
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Password" class="form-label">Password</label>
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="checkbox mb-3">
-                    <label asp-for="RememberMe" class="form-label">
-                        <input class="form-check-input" asp-for="RememberMe" />
-                    </label>
-                </div>
-                <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">
-                        Log In
+                <rect x="80" y="104" width="18" height="18" rx="5" fill="#6C4CFF"/>
+                <path d="M84 113 l3 3 l6 -7" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="106" y="108" width="50" height="6" rx="3" fill="#D9D2FB"/>
+
+                <rect x="80" y="136" width="18" height="18" rx="5" fill="#EEE9FD" stroke="#6C4CFF" stroke-width="2"/>
+                <rect x="106" y="140" width="40" height="6" rx="3" fill="#D9D2FB"/>
+
+                <circle cx="190" cy="128" r="20" fill="#6C4CFF"/>
+                <circle cx="190" cy="123" r="8" fill="#EEEBFD"/>
+                <path d="M168 178 a22 22 0 0 1 44 0 z" fill="#6C4CFF"/>
+            </svg>
+        </div>
+
+        <div class="auth-form__head">
+            <h1 class="auth-form__title">Welcome Back!</h1>
+            <p class="auth-form__subtitle">Login to your account</p>
+        </div>
+
+        <form asp-controller="User"
+              asp-action="Login"
+              asp-route-returnUrl="@ViewData["ReturnUrl"]"
+              method="post"
+              class="auth-form">
+
+            <div asp-validation-summary="ModelOnly" class="auth-form__summary" role="alert"></div>
+
+            <div class="form-field">
+                <label asp-for="Email" class="form-field__label">Email</label>
+                <input asp-for="Email" class="form-field__input" autocomplete="username" placeholder="john@example.com" />
+                <span asp-validation-for="Email" class="form-field__error"></span>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Password" class="form-field__label">Password</label>
+                <div class="form-field__control">
+                    <input asp-for="Password" type="password" class="form-field__input" autocomplete="current-password" placeholder="••••••••" />
+                    <button type="button" class="form-field__toggle" data-toggle-password aria-label="Show password">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
                     </button>
                 </div>
-                <div>
-                    <p>
-                        <a asp-controller="" aps-action="">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a asp-controller="User" asp-action="Register">Register as a new user</a>
-                    </p>
-                </div>
-            </form>
-        </section>
+                <span asp-validation-for="Password" class="form-field__error"></span>
+            </div>
+
+            <div class="auth-form__options">
+                <label class="auth-form__remember">
+                    <input asp-for="RememberMe" type="checkbox" />
+                    <span>Remember me</span>
+                </label>
+                <a class="auth-form__forgot" href="#">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="auth-form__submit">Login</button>
+
+            <p class="auth-form__alt">
+                Don't have an account?
+                <a asp-controller="User" asp-action="Register">Register</a>
+            </p>
+        </form>
+
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('[data-toggle-password]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = btn.parentElement.querySelector('input');
+                var reveal = input.type === 'password';
+                input.type = reveal ? 'text' : 'password';
+                btn.classList.toggle('is-visible', reveal);
+                btn.setAttribute('aria-label', reveal ? 'Hide password' : 'Show password');
+            });
+        });
+    </script>
 }
