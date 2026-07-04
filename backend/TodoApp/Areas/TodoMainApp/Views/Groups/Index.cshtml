@@ -1,38 +1,44 @@
-﻿@using TodoApp.Models.Group
+@using TodoApp.Models.Group
 @model IEnumerable<AllGroupsViewModel>
 
 @{
     int groupsCount = Model.Count();
+    int count = 1;
 }
 
-<div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/groups-index/groups-index.css" asp-append-version="true" />
+}
 
-    <div>
-        <h3>You have @groupsCount groups</h3>
+<div class="groups-page">
+
+    <div class="groups-header">
+        <h3 class="groups-header__title">You have @groupsCount groups</h3>
     </div>
-    
-    <div>
-        
-        <h3>Name</h3>
+
+    <div class="groups-list__head">
+
+        <h3 class="groups-list__head-label">Name</h3>
 
     </div>
-    
-    <div>
-        
+
+    <div class="groups-list">
+
         @foreach (AllGroupsViewModel group in Model)
         {
-            <a
+            <a class="group-card"
                 asp-area="TodoMainApp"
                 asp-controller="Todo"
                 asp-action="Index"
                 asp-route-id="@group.Id">
-                <p>@group.Name</p>
-                <p>@group.Id</p>
+                <p class="group-card__name">@group.Name</p>
+                <p class="group-card__index">@count</p>
             </a>
+            count++;
         }
 
     </div>
-    
-    
+
+
 
 </div>

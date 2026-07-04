@@ -1,0 +1,134 @@
+:root{
+    --brand:#6C4CFF;
+    --card-bg:#ffffff;
+    --card-border:rgba(15,23,42,0.06);
+    --row-border:rgba(15,23,42,0.05);
+    --text-dark:#111827;
+    --text-muted:#6b7280;
+}
+
+.groups-page{
+    max-width:60rem;
+    padding:0.5rem 0;
+}
+
+.groups-header{
+    margin-bottom:1.5rem;
+}
+.groups-header__title{
+    margin:0;
+    font-size:1.375rem;
+    font-weight:700;
+    color:var(--text-dark);
+}
+
+/* Column-header bar (top of the card) */
+.groups-list__head{
+    display:flex;
+    align-items:center;
+    padding:0.85rem 1.25rem;
+    background:var(--card-bg);
+    border:0.0625rem solid var(--card-border);
+    border-bottom:none;
+    border-radius:0.875rem 0.875rem 0 0;
+}
+.groups-list__head-label{
+    margin:0;
+    font-size:0.75rem;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--text-muted);
+}
+
+/* Card body holding the rows */
+.groups-list{
+    display:flex;
+    flex-direction:column;
+    background:var(--card-bg);
+    border:0.0625rem solid var(--card-border);
+    border-radius:0 0 0.875rem 0.875rem;
+    box-shadow:0 0.5rem 1rem rgba(15,23,42,0.04);
+    overflow:hidden;
+}
+
+/* Empty state: no rows -> hide the empty body, round the header fully */
+.groups-list:empty{
+    display:none;
+}
+.groups-list__head:has(+ .groups-list:empty){
+    border-radius:0.875rem;
+    border-bottom:0.0625rem solid var(--card-border);
+}
+
+.group-card{
+    display:flex;
+    align-items:center;
+    gap:0.875rem;
+    padding:0.95rem 1.25rem;
+    text-decoration:none;
+    color:var(--text-dark);
+    border-bottom:0.0625rem solid var(--row-border);
+    transition:background-color 0.15s ease;
+}
+.group-card:last-child{
+    border-bottom:none;
+}
+.group-card:hover{
+    background-color:rgba(108,76,255,0.05);
+}
+
+/* Numbered badge — placed before the name via order (HTML has name first) */
+.group-card__index{
+    order:-1;
+    flex-shrink:0;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:1.75rem;
+    height:1.75rem;
+    margin:0;
+    border-radius:0.5rem;
+    background:rgba(108,76,255,0.10);
+    color:var(--brand);
+    font-size:0.8125rem;
+    font-weight:600;
+}
+
+.group-card__name{
+    flex:1;
+    min-width:0;
+    margin:0;
+    font-size:0.95rem;
+    font-weight:600;
+    color:var(--text-dark);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+/* Chevron affordance on the right */
+.group-card::after{
+    content:'\203A';
+    flex-shrink:0;
+    color:#c2c6cf;
+    font-size:1.35rem;
+    line-height:1;
+    transition:transform 0.15s ease, color 0.15s ease;
+}
+.group-card:hover::after{
+    color:var(--brand);
+    transform:translateX(0.1875rem);
+}
+
+/* Mobile */
+@media (max-width:36rem){
+    .groups-header__title{
+        font-size:1.2rem;
+    }
+    .groups-list__head,
+    .group-card{
+        padding-left:1rem;
+        padding-right:1rem;
+    }
+}
