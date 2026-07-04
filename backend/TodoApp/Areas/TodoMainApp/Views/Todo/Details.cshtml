@@ -2,10 +2,6 @@
 @using TodoApp.Models.Todo
 @model TodoDetailsViewmodel
 
-@{
-    Guid groupId = Guid.Parse(TempData.Peek("id")!.ToString()!);
-}
-
 @section Styles {
     <link rel="stylesheet" href="~/css/todo-details/todo-details.css" asp-append-version="true" />
 }
@@ -17,7 +13,7 @@
            asp-area="TodoMainApp"
            asp-controller="Todo"
            asp-action="Index"
-           asp-route-id="@groupId"
+           asp-route-id="@Model.GroupId"
            aria-label="Back to todos">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="19" y1="12" x2="5" y2="12"/>
@@ -81,7 +77,7 @@
                asp-area="TodoMainApp"
                asp-controller="Todo"
                asp-action="Index"
-               asp-route-id="@groupId">Back</a>
+               asp-route-id="@Model.GroupId">Back</a>
         </div>
 
     </div>

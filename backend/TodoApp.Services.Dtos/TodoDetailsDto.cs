@@ -15,5 +15,7 @@ public class TodoDetailsDto
 
     public string CreatedOn { get; set; } = null!;
 
+    public Guid GroupId { get; set; }
+
     public List<CommentDto> Comments { get; set; } = new List<CommentDto>();
 }

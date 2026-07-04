@@ -1,6 +1,6 @@
 ﻿@using TodoApp.Models.Todo
 @using TodoApp.Web.ViewModels.Todo
-@model IEnumerable<TodoApp.Web.ViewModels.Todo.TodoViewModel>
+@model AllTodosViewModel
 
 @{
 }
@@ -16,15 +16,16 @@
             <p>Due Date</p>
         </div>
 
-        @if (Model.Any())
+        @if (Model.Todos.Any())
         {
-            foreach (TodoViewModel todo in Model)
+            foreach (TodoViewModel todo in Model.Todos)
             {
                 <div>
                     <a asp-area="TodoMainApp"
                        asp-controller="Todo"
                        asp-action="Activate"
-                       asp-route-id="@todo.Id">Activate</a>
+                       asp-route-id="@todo.Id"
+                       asp-route-groupId="@Model.GroupId">Activate</a>
 
                     <a
                         asp-area="TodoMainApp"

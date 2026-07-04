@@ -55,20 +55,21 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                 return BadRequest();
             }
 
-            TempData["groupId"] = id;
-
             IEnumerable<AllTodoDto> alltodos = await _todoService
                 .GetAllTodosOrderByPriorityDueDateAsync(userId, id);
 
-            IEnumerable<TodoViewModel> result
-                = alltodos.Select(t => new TodoViewModel()
+            AllTodosViewModel result = new AllTodosViewModel()
+            {
+                GroupId = id,
+                Todos = alltodos.Select(t => new TodoViewModel()
                 {
                     Id = t.Id,
                     Name = t.Name,
                     DueDate = t.DueDate,
                     Priority = t.Priority,
                     Status = t.Status
-                });
+                })
+            };
 
             return View(result);
         }
@@ -100,6 +101,7 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                 DueDate = todo.DueDate,
                 GroupName = todo.GroupName,
                 CreatedOn = todo.CreatedOn,
+                GroupId = todo.GroupId,
                 Comments = todo.Comments.Select(c => new CommentViewModel()
                 {
                     Id = c.Id,
@@ -111,11 +113,11 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create([FromRoute] Guid groupId)
+        public async Task<IActionResult> Create([FromRoute] Guid id)
         {
             Guid userId = Guid.Parse(GetUserId()!);
 
-            bool groupExistsAndBelongToUser = await _groupService.GroupExistsAsync(groupId, userId);
+            bool groupExistsAndBelongToUser = await _groupService.GroupExistsAsync(id, userId);
 
             if (!groupExistsAndBelongToUser)
             {
@@ -126,11 +128,11 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromQuery] Guid groupId, [FromQuery] CreateEditViewModel model)
+        public async Task<IActionResult> Create([FromQuery] Guid id, [FromForm] CreateEditViewModel model)
         {
             Guid userId = Guid.Parse(GetUserId()!);
 
-            bool groupExistsAndBelongToUser = await _groupService.GroupExistsAsync(groupId, userId);
+            bool groupExistsAndBelongToUser = await _groupService.GroupExistsAsync(id, userId);
 
             if (!groupExistsAndBelongToUser)
             {
@@ -156,7 +158,7 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                     Description = model.Description,
                     DueDate = model.DueDate.ToString(DateFormat),
                     Priority = model.Priority,
-                    GroupId = groupId
+                    GroupId = id
                 };
 
                 await _todoService.AddTodoAsync(todo, userId);
@@ -176,7 +178,7 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                 return View(model);
             }
 
-            return RedirectToAction(nameof(Index), new{groupId = groupId});
+            return RedirectToAction(nameof(Index), new{groupId = id});
         }
 
         [HttpGet]
@@ -258,19 +260,12 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete([FromQuery] Guid todoId)
+        public async Task<IActionResult> Delete([FromQuery] Guid todoId, [FromQuery] Guid groupId)
         {
             if (todoId.ToString().IsNullOrEmpty())
             {
                 return BadRequest();
             }
-
-            if (TempData["groupId"] == null)
-            {
-                return RedirectToAction("Index", "Dashboard");
-            }
-
-            Guid groupId = (Guid)TempData["GroupId"]!;
 
             Guid userId = Guid.Parse(GetUserId()!);
 
@@ -325,34 +320,31 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                     true,
                     true);
 
-            IEnumerable<TodoViewModel> result = allTodos.Select(t => new TodoViewModel()
+            AllTodosViewModel result = new AllTodosViewModel()
             {
-                Id = t.Id,
-                Name = t.Name,
-                DueDate = t.DueDate,
-                Priority = t.Priority,
-                Status = t.Status
-            });
+                GroupId = id,
+                Todos = allTodos.Select(t => new TodoViewModel()
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    DueDate = t.DueDate,
+                    Priority = t.Priority,
+                    Status = t.Status
+                })
+            };
 
             return View(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Activate([FromRoute] Guid id)
+        public async Task<IActionResult> Activate([FromRoute] Guid id, [FromQuery] Guid groupId)
         {
             if (id.ToString().IsNullOrEmpty())
             {
                 return BadRequest();
             }
 
-            if (TempData["groupId"] == null)
-            {
-                return RedirectToAction("Index", "Dashboard");
-            }
-
             Guid userId = Guid.Parse(GetUserId()!);
-
-            Guid groupId = (Guid)TempData.Peek("groupId")!;
 
             try
             {
@@ -372,20 +364,14 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Complete([FromRoute] Guid id)
+        public async Task<IActionResult> Complete([FromRoute] Guid id, [FromQuery] Guid groupId)
         {
             if (id.ToString().IsNullOrEmpty())
             {
                 return BadRequest();
             }
 
-            if (TempData["groupId"] == null)
-            {
-                return RedirectToAction("Index", "Dashboard");
-            }
-
             Guid userId = Guid.Parse(GetUserId()!);
-            Guid groupId = (Guid)TempData.Peek("groupId")!;
 
             try
             {

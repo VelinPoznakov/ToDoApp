@@ -88,7 +88,7 @@ public class TodoService: ITodoService
             Description = todoEntity.Description,
             Priority = todoEntity.Priority.ToString(),
             DueDate = todoEntity.DueDate.ToString(DateFormat),
-            
+            GroupId = todoEntity.GroupId
         };
 
         if (!track)

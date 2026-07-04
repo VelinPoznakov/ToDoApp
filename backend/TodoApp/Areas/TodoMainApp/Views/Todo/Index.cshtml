@@ -1,8 +1,8 @@
-@using TodoApp.Models.Todo
 @using TodoApp.Web.ViewModels.Todo
-@model IEnumerable<TodoApp.Web.ViewModels.Todo.TodoViewModel>
+@model AllTodosViewModel
+
 @{
-    Guid groupId = Guid.Parse(TempData.Peek("groupId")!.ToString()!);
+    Guid groupId = Model.GroupId;
 }
 
 @section Styles {
@@ -41,7 +41,7 @@
                asp-area="TodoMainApp"
                asp-controller="Todo"
                asp-action="Create"
-               asp-route-groupId="@groupId">
+               asp-route-id="@groupId">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <line x1="12" y1="5" x2="12" y2="19"/>
                     <line x1="5" y1="12" x2="19" y2="12"/>
@@ -62,9 +62,9 @@
             <p class="todo-col todo-col--actions">Actions</p>
         </div>
 
-        @if (Model.Any())
+        @if (Model.Todos.Any())
         {
-            @foreach (TodoViewModel todo in Model)
+            @foreach (TodoViewModel todo in Model.Todos)
             {
                 <div class="todo-row">
 
@@ -74,6 +74,7 @@
                               asp-controller="Todo"
                               asp-action="Complete"
                               asp-route-id="@todo.Id"
+                              asp-route-groupId="@groupId"
                               method="post">
                             <input type="checkbox"
                                    class="todo-row__check"
@@ -108,6 +109,7 @@
                            asp-controller="Todo"
                            asp-action="Delete"
                            asp-route-todoId="@todo.Id"
+                           asp-route-groupId="@groupId"
                            aria-label="Delete">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <polyline points="3 6 5 6 21 6"/>

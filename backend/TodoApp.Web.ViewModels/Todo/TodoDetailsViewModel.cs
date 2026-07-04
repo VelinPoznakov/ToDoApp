@@ -17,6 +17,8 @@ public class TodoDetailsViewmodel
 
     public string CreatedOn { get; set; } = null!;
 
+    public Guid GroupId { get; set; }
+
     public ICollection<CommentViewModel> Comments { get; set; } 
         = new List<CommentViewModel>();
 
