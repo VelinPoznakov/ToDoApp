@@ -36,6 +36,7 @@ a {
 
 .app-name {
     display: flex;
+    gap: 0.5em;
     font-weight: bold;
     align-items: center;
     font-size: 20px;
@@ -52,4 +53,34 @@ a.register-btn {
     padding: 0.5em 0.8em;
     border-radius: 5px;
     border: none;
+}
+
+.auth > a {
+    transition: color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+
+.auth > a:not(.register-btn):hover {
+    color: #6C4CFF;
+}
+
+a.register-btn:hover {
+    background-color: #5b3df0;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 36rem) {
+    .nav {
+        gap: 0.75em;
+        padding: 0.75em 1em;
+        font-size: 15px;
+    }
+
+    .app-name {
+        font-size: 18px;
+    }
+
+    .auth {
+        gap: 1em;
+        font-size: 16px;
+    }
 }
