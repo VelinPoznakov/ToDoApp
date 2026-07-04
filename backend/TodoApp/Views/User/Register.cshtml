@@ -1,4 +1,4 @@
-﻿@model RegisterViewModel
+@model RegisterViewModel
 @{
     ViewData["Title"] = "Register";
 }
@@ -7,55 +7,116 @@
     <link rel="stylesheet" href="~/css/register/register.css" asp-append-version="true" />
 }
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-controller="User"
-              asp-action="Register"
-              asp-route-returnUrl="@ViewData["ReturnUrl"]"
-              method="post">
+<div class="auth-page">
+    <div class="auth-card">
 
-            <h2>Create a new account</h2>
-            <hr />
+        <aside class="auth-card__aside">
+            <svg class="auth-illustration" viewBox="0 0 260 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Checklist illustration">
+                <circle cx="120" cy="110" r="92" fill="#ffffff" opacity="0.55"/>
+                <rect x="64" y="40" width="104" height="138" rx="14" fill="#ffffff" stroke="#6C4CFF" stroke-width="3"/>
+                <rect x="98" y="30" width="36" height="20" rx="7" fill="#6C4CFF"/>
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <rect x="80" y="72" width="18" height="18" rx="5" fill="#6C4CFF"/>
+                <path d="M84 81 l3 3 l6 -7" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="106" y="76" width="50" height="6" rx="3" fill="#D9D2FB"/>
 
-            <div class="form-floating mb-3">
-                <input asp-for="FirstName" class="form-control" placeholder="First Name" />
-                <label asp-for="FirstName"></label>
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+                <rect x="80" y="104" width="18" height="18" rx="5" fill="#6C4CFF"/>
+                <path d="M84 113 l3 3 l6 -7" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="106" y="108" width="50" height="6" rx="3" fill="#D9D2FB"/>
+
+                <rect x="80" y="136" width="18" height="18" rx="5" fill="#EEE9FD" stroke="#6C4CFF" stroke-width="2"/>
+                <rect x="106" y="140" width="40" height="6" rx="3" fill="#D9D2FB"/>
+
+                <circle cx="190" cy="128" r="20" fill="#6C4CFF"/>
+                <circle cx="190" cy="123" r="8" fill="#EEEBFD"/>
+                <path d="M168 178 a22 22 0 0 1 44 0 z" fill="#6C4CFF"/>
+            </svg>
+        </aside>
+
+        <div class="auth-card__form">
+            <div class="auth-form__head">
+                <h1 class="auth-form__title">Create Account</h1>
+                <p class="auth-form__subtitle">Sign up to get started</p>
             </div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="LastName" class="form-control" placeholder="Last Name" />
-                <label asp-for="LastName"></label>
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
+            <form asp-controller="User"
+                  asp-action="Register"
+                  asp-route-returnUrl="@ViewData["ReturnUrl"]"
+                  method="post"
+                  class="auth-form">
 
-            <div class="form-floating mb-3">
-                <input asp-for="Email" class="form-control" autocomplete="username" placeholder="name@example.com" />
-                <label asp-for="Email"></label>
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+                <div asp-validation-summary="ModelOnly" class="auth-form__summary"></div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="Password" type="password" class="form-control" autocomplete="new-password" placeholder="Password" />
-                <label asp-for="Password"></label>
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+                <div class="auth-form__row">
+                    <div class="form-field">
+                        <label asp-for="FirstName" class="form-field__label"></label>
+                        <input asp-for="FirstName" class="form-field__input" placeholder="John" />
+                        <span asp-validation-for="FirstName" class="form-field__error"></span>
+                    </div>
+                    <div class="form-field">
+                        <label asp-for="LastName" class="form-field__label"></label>
+                        <input asp-for="LastName" class="form-field__input" placeholder="Doe" />
+                        <span asp-validation-for="LastName" class="form-field__error"></span>
+                    </div>
+                </div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="ConfirmPassword" type="password" class="form-control" autocomplete="new-password" placeholder="Confirm Password" />
-                <label asp-for="ConfirmPassword"></label>
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
+                <div class="form-field">
+                    <label asp-for="Email" class="form-field__label"></label>
+                    <input asp-for="Email" class="form-field__input" autocomplete="username" placeholder="john@example.com" />
+                    <span asp-validation-for="Email" class="form-field__error"></span>
+                </div>
 
-            <button type="submit" class="w-100 btn btn-lg btn-primary">
-                Register
-            </button>
-        </form>
+                <div class="form-field">
+                    <label asp-for="Password" class="form-field__label"></label>
+                    <div class="form-field__control">
+                        <input asp-for="Password" type="password" class="form-field__input" autocomplete="new-password" placeholder="••••••••" />
+                        <button type="button" class="form-field__toggle" data-toggle-password aria-label="Show password">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="form-field__error"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="ConfirmPassword" class="form-field__label"></label>
+                    <div class="form-field__control">
+                        <input asp-for="ConfirmPassword" type="password" class="form-field__input" autocomplete="new-password" placeholder="••••••••" />
+                        <button type="button" class="form-field__toggle" data-toggle-password aria-label="Show password">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="form-field__error"></span>
+                </div>
+
+                <button type="submit" class="auth-form__submit">Register</button>
+
+                <p class="auth-form__alt">
+                    Already have an account?
+                    <a asp-controller="User" asp-action="Login">Login</a>
+                </p>
+            </form>
+        </div>
+
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('[data-toggle-password]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = btn.parentElement.querySelector('input');
+                var reveal = input.type === 'password';
+                input.type = reveal ? 'text' : 'password';
+                btn.classList.toggle('is-visible', reveal);
+                btn.setAttribute('aria-label', reveal ? 'Hide password' : 'Show password');
+            });
+        });
+    </script>
 }
