@@ -1,72 +1,138 @@
-﻿@using TodoApp.Models.Todo
-@model IEnumerable<TodoViewModel>
+@using TodoApp.Models.Todo
+@using TodoApp.Web.ViewModels.Todo
+@model IEnumerable<TodoApp.Web.ViewModels.Todo.TodoViewModel>
 @{
-
     Guid groupId = Guid.Parse(TempData.Peek("groupId")!.ToString()!);
-
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/todo-index/todo-index.css" asp-append-version="true" />
+}
 
-<div>
-    
-    GROUP NAME
-    
-    <a asp-area="TodoMainApp"
-       asp-controller="Todo"
-       asp-action="Completed"
-       asp-route-id="@groupId">Completed</a>
-    
-    <div>
-        <div>
-            <p>Title</p>
-            <p>Priority</p>
-            <p>Status</p>
-            <p>DueDate</p>
+<div class="todo-page">
+
+    <div class="page-header">
+        <h3 class="page-header__title">GROUP NAME</h3>
+    </div>
+
+    <div class="todo-toolbar">
+
+        <div class="todo-tabs">
+            <button type="button" class="todo-tab">All</button>
+            <button type="button" class="todo-tab">Pending</button>
+            <a class="todo-tab"
+               asp-area="TodoMainApp"
+               asp-controller="Todo"
+               asp-action="Completed"
+               asp-route-id="@groupId">Completed</a>
+            <button type="button" class="todo-tab">Important</button>
         </div>
-        
-        <div>
-            
-            @foreach (TodoViewModel todo in Model)
-            {
-                <div>
-                    <a asp-area="TodoMainApp"
-                       asp-controller="Todo"
-                       asp-action="Complete"
-                       asp-route-id="@todo.Id">Complete</a>
 
-                    <a
-                        asp-area="TodoMainApp"
-                        asp-controller="Todo"
-                        asp-action="Details"
-                        asp-route-id="@todo.Id">
+        <div class="todo-toolbar__right">
+            <div class="todo-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" class="todo-search__input" placeholder="Search todos..." />
+            </div>
 
-                        <p>@todo.Name</p>
-                        <p>@todo.Priority</p>
-                        <p>@todo.Status</p>
-                        <p>@todo.DueDate</p>
-                    </a>
-                    <div>
-                        <a asp-area="TodoMainApp"
-                           asp-controller="Todo"
-                           asp-action="Edit"
-                           asp-route-id="@todo.Id">Edit</a>
-
-                        <a asp-area="TodoMainApp"
-                           asp-controller="Todo"
-                           asp-action="Delete"
-                           asp-route-id="@todo.Id">Delete</a>
-                    </div>
-                </div>
-            }
-
+            <a class="todo-add"
+               asp-area="TodoMainApp"
+               asp-controller="Todo"
+               asp-action="Create"
+               asp-route-groupId="@groupId">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Add Todo</span>
+            </a>
         </div>
-        
 
     </div>
 
-    
+    <div class="todo-table">
 
-    
-    
+        <div class="todo-table__head">
+            <p class="todo-col todo-col--title">Title</p>
+            <p class="todo-col">Status</p>
+            <p class="todo-col">Priority</p>
+            <p class="todo-col">Due Date</p>
+            <p class="todo-col todo-col--actions">Actions</p>
+        </div>
+
+        @if (Model.Any())
+        {
+            @foreach (TodoViewModel todo in Model)
+            {
+                <div class="todo-row">
+
+                    <div class="todo-row__title">
+                        <form class="todo-row__complete"
+                              asp-area="TodoMainApp"
+                              asp-controller="Todo"
+                              asp-action="Complete"
+                              asp-route-id="@todo.Id"
+                              method="post">
+                            <input type="checkbox"
+                                   class="todo-row__check"
+                                   onchange="this.form.submit()"
+                                   aria-label="Mark complete" />
+                        </form>
+                        <a class="todo-row__name"
+                           asp-area="TodoMainApp"
+                           asp-controller="Todo"
+                           asp-action="Details"
+                           asp-route-id="@todo.Id">@todo.Name</a>
+                    </div>
+
+                    <p class="todo-row__cell todo-row__status todo-row__status--@(todo.Status?.ToLower())" data-label="Status">@todo.Status</p>
+                    <p class="todo-row__cell todo-row__priority todo-row__priority--@(todo.Priority?.ToLower())" data-label="Priority">@todo.Priority</p>
+                    <p class="todo-row__cell todo-row__due" data-label="Due Date">@todo.DueDate</p>
+
+                    <div class="todo-row__actions">
+                        <a class="todo-action todo-action--edit"
+                           asp-area="TodoMainApp"
+                           asp-controller="Todo"
+                           asp-action="Edit"
+                           asp-route-id="@todo.Id"
+                           aria-label="Edit">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 20h9"/>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                            </svg>
+                        </a>
+                        <a class="todo-action todo-action--delete"
+                           asp-area="TodoMainApp"
+                           asp-controller="Todo"
+                           asp-action="Delete"
+                           asp-route-todoId="@todo.Id"
+                           aria-label="Delete">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="todo-empty">No todos in this group yet.</div>
+        }
+
+    </div>
+
+    <div class="todo-pagination">
+        <button type="button" class="todo-page-btn todo-page-btn--nav" aria-label="Previous">&lsaquo;</button>
+        <button type="button" class="todo-page-btn">1</button>
+        <button type="button" class="todo-page-btn">2</button>
+        <button type="button" class="todo-page-btn todo-page-btn--nav" aria-label="Next">&rsaquo;</button>
+    </div>
 
 </div>
