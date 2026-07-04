@@ -5,6 +5,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/dashboard/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/todo-dashboard-deatail/todo-dashboard-details.css" asp-append-version="true" />
 }
 
 <div class="dashboard-page">
@@ -69,7 +70,10 @@
         
         <div class="todos-section__head">
             <h4 class="todos-section__title">Due Date</h4>
-            <h4 class="todos-section__viewall"><a asp-action="" asp-controller="" asp-area="">View All</a></h4>
+            @if (Model.Todos.Count() > 5)
+            {
+                <h4 class="todos-section__viewall"><a asp-action="" asp-controller="" asp-area="">View All</a></h4>
+            }
         </div>
         
         @if (Model.Todos.Count() != 0)
