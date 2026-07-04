@@ -6,7 +6,7 @@ using TodoApp.Models.Comment;
 using TodoApp.Models.Todo;
 using TodoApp.Services.Core.Contracts;
 using TodoApp.Services.Dtos;
-
+using TodoApp.Web.ViewModels.Todo;
 using static TodoApp.GCommon.ModelsErrorMessages;
 using static TodoApp.GCommon.ErrorMessages;
 using static TodoApp.GCommon.ApplicationConstants;
