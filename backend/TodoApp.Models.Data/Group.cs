@@ -19,12 +19,6 @@ public class Group
     [Unicode(true)]
     public string Name { get; set; } = null!;
 
-    [Comment("Description of the group")]
-    [Required]
-    [Unicode(true)]
-    [MaxLength(DescriptionMaxLength)]
-    public string Description { get; set; } = null!;
-
     public virtual ICollection<TodoEntity> Todos { get; set; } 
         = new List<TodoEntity>();
 
