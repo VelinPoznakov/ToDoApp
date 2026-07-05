@@ -1,0 +1,59 @@
+@using TodoApp.Models.Group
+@model CreateEditGroupViewModel
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/create-group/create-group.css" asp-append-version="true" />
+}
+
+<div class="create-page">
+
+    <div class="create-header">
+        <a class="create-header__back"
+           asp-area="TodoMainApp"
+           asp-controller="Groups"
+           asp-action="Index"
+           aria-label="Back to groups">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+        </a>
+        <div class="create-header__heading">
+            <h3 class="create-header__title">Add New Group</h3>
+            <p class="create-header__subtitle">Create a new group for your todos</p>
+        </div>
+    </div>
+
+    <div class="create-card">
+
+        <form class="create-form"
+              asp-area="TodoMainApp"
+              asp-controller="Groups"
+              asp-action="CreateGroup"
+              method="post">
+
+            <div asp-validation-summary="ModelOnly" class="create-form__summary"></div>
+
+            <div class="form-field">
+                <label class="form-field__label" asp-for="GroupName">Name</label>
+                <input class="form-field__input" asp-for="GroupName" placeholder="Enter group name" />
+                <span class="form-field__error" asp-validation-for="GroupName"></span>
+            </div>
+
+            <div class="create-actions">
+                <a class="create-btn create-btn--cancel"
+                   asp-area="TodoMainApp"
+                   asp-controller="Groups"
+                   asp-action="Index">Cancel</a>
+                <button type="submit" class="create-btn create-btn--save">Save Group</button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

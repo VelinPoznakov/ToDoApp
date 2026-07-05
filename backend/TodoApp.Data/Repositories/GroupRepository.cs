@@ -44,4 +44,39 @@ public class GroupRepository: BaseRepository, IGroupRepository
             .Groups
             .AnyAsync(filter);
     }
+
+    public async Task<Group?> GetGroupByIdWithTodosAsync(Guid id)
+    {
+        return await DbContext.Groups
+            .Include(t => t.Todos)
+            .FirstOrDefaultAsync(g => g.Id == id);
+    }
+
+    public async Task<bool> DeleteGroupAsync(Group group)
+    {
+        DbContext.Groups.Remove(group);
+
+        int result = await SaveChangesAsync();
+
+        return result == 1;
+    }
+
+    public async Task<bool> DeleteGroupWithTodos(Group group)
+    {
+        DbContext.Todos.RemoveRange(group.Todos);
+        DbContext.Groups.Remove(group);
+
+        int result = await SaveChangesAsync();
+
+        return result == (1 + group.Todos.Count);
+    }
+
+    public async Task<bool> CreateGroup(Group group)
+    {
+        await DbContext.Groups.AddAsync(group);
+
+        int result = await SaveChangesAsync();
+
+        return result == 1;
+    }
 }

@@ -11,4 +11,8 @@ public interface IGroupService
     Task<int> GetAllGroupsCount(Guid userId);
 
     Task<bool> GroupExistsAsync(Guid groupId, Guid userId);
+
+    Task DeleteGroupAsync(Guid groupId);
+
+    Task<Guid> CreateGroup(CreateEditGroupDto model, Guid userId);
 }

@@ -18,5 +18,7 @@
         public const string TodoNameErrorMessage = "Todo name must be between {2} and {1} characters long.";
         public const string TodoDescriptionErrorMessage = "Description must be between {2} and {1} characters long.";
         public const string InvalidPriorityErrorMessage = "Please select a valid priority.";
+
+        public const string InvalidGroupName = "Group name has to be between {2} and {1} characters long";
     }
 }

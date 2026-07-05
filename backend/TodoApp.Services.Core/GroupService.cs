@@ -1,4 +1,5 @@
 ﻿using TodoApp.Data.Repositories.Contracts;
+using TodoApp.GCommon.Exceptions;
 using TodoApp.Models.Data;
 using TodoApp.Services.Core.Contracts;
 using TodoApp.Services.Dtos;
@@ -43,5 +44,52 @@ public class GroupService: IGroupService
     {
         return await _groupRepository
             .ExistsAsync(g => g.Id == groupId && g.UserId == userId);
+    }
+
+    public async Task DeleteGroupAsync(Guid groupId)
+    {
+        Group? group = await _groupRepository
+            .GetGroupByIdWithTodosAsync(groupId);
+
+        if (group == null)
+        {
+            throw new EntityNotFoundException();
+        }
+
+        bool result = false;
+
+        if (group.Todos.Count != 0)
+        {
+            result = await _groupRepository.DeleteGroupWithTodos(group);
+        }
+        else
+        {
+            result = await _groupRepository.DeleteGroupAsync(group);
+        }
+
+        if (!result)
+        {
+            throw new DataPersistFail();
+        }
+    }
+
+    public async Task<Guid> CreateGroup(CreateEditGroupDto model, Guid userId)
+    {
+        Group newGroup = new Group()
+        {
+            Id = Guid.NewGuid(),
+            Name = model.GroupName,
+            UserId = userId,
+            CreatedOn = DateTime.Now
+        };
+
+        bool result = await _groupRepository.CreateGroup(newGroup);
+
+        if (!result)
+        {
+            throw new DataPersistFail();
+        }
+
+        return newGroup.Id;
     }
 }
