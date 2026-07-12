@@ -268,10 +268,11 @@ public class TodoRepositoryTests
     }
 
     [Fact]
-    public async Task CountTodosAsync_OnlyCompleted_CountsOnlyCompletedTodos()
+    public async Task CountTodosAsync_CountCompleted_LiftsQueryFilterSoCallerCanCountCompleted()
     {
-        // The parameter is named onlyCompleted, so the expected result is the
-        // number of COMPLETED todos - not the total of all todos.
+        // Contract: countCompleted only lifts the global query filter
+        // (Status == Pending); the STATUS condition itself is the caller's
+        // job (TodoService passes t.Status == Status.Completed).
         var options = TestDb.Options();
         Guid groupId = Guid.NewGuid();
         Guid userId = Guid.NewGuid();
@@ -288,6 +289,44 @@ public class TodoRepositoryTests
         await using var ctx = new TodoDbContext(options);
         var repo = new TodoRepository(ctx);
 
-        Assert.Equal(1, await repo.CountTodosAsync(t => t.UserId == userId, onlyCompleted: true));
+        Assert.Equal(1, await repo.CountTodosAsync(
+            t => t.UserId == userId && t.Status == Status.Completed,
+            countCompleted: true));
+    }
+
+    // ===== GetAllTodoNoTracking with includeGroup =====
+
+    [Fact]
+    public async Task GetAllTodoNoTracking_IncludeGroup_LoadsTheGroupNavigation()
+    {
+        // GetTodosAfterDueDate relies on this path to show the group name
+        // on the dashboard.
+        var options = TestDb.Options();
+        Guid groupId = Guid.NewGuid();
+        Guid userId = Guid.NewGuid();
+
+        await using (var seed = new TodoDbContext(options))
+        {
+            seed.Groups.Add(TestDb.NewGroup(groupId, userId, "Dashboard Group"));
+            seed.Todos.Add(TestDb.NewTodo(groupId, userId, "Overdue"));
+            await seed.SaveChangesAsync();
+        }
+
+        await using var ctx = new TodoDbContext(options);
+        var repo = new TodoRepository(ctx);
+
+        TodoEntity[] result = (await repo.GetAllTodoNoTracking(
+            filterQuery: t => t.UserId == userId,
+            projectionQuery: t => new TodoEntity
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Group = t.Group
+            },
+            includeGroup: true)).ToArray();
+
+        TodoEntity todo = Assert.Single(result);
+        Assert.NotNull(todo.Group);
+        Assert.Equal("Dashboard Group", todo.Group.Name);
     }
 }

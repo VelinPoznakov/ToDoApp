@@ -21,5 +21,5 @@ public interface ITodoRepository
 
     Task<int> CountTodosAsync(
         Expression<Func<TodoEntity, bool>> filter,
-        bool onlyCompleted = false);
+        bool countCompleted = false);
 }

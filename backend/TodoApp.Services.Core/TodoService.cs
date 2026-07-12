@@ -204,14 +204,26 @@ public class TodoService: ITodoService
         }
     }
 
-    public async Task<int> CountTodos(Guid userId, bool filter = false)
+    public async Task<int> CountTodos(Guid userId, bool onlyCompleted = false)
     {
-        Expression<Func<TodoEntity, bool>> whereFilter = t => t.UserId == userId;
+        Expression<Func<TodoEntity, bool>> whereFilter;
+        
+        if (onlyCompleted)
+        {
+            whereFilter = t => t.UserId == userId
+                               && t.Status == Status.Completed;
+
+            return await _todoRepository
+                .CountTodosAsync(whereFilter,
+                    countCompleted: onlyCompleted);
+        }
+
+        whereFilter = t => t.UserId == userId;
 
         return await _todoRepository
             .CountTodosAsync(
                 filter: whereFilter,
-                onlyCompleted: filter
+                countCompleted: onlyCompleted
             );
     }
 

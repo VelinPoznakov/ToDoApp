@@ -10,7 +10,7 @@ public interface ITodoService
     Task EditTodoAsync(Guid userId, Guid todoId, CreateEditTodoDto editTodoDto);
     Task ActivateTodoAsync(Guid userId, Guid todoId);
     Task DeleteTodoAsync(Guid userId, Guid todoId);
-    Task<int> CountTodos(Guid userId, bool filter = false);
+    Task<int> CountTodos(Guid userId, bool onlyCompleted = false);
     Task<IEnumerable<TodosAfterDuelDate>> GetTodosAfterDueDate(Guid userId);
     Task CompleteTodo(Guid todoId, Guid userId);
 }

@@ -107,14 +107,14 @@ public class TodoRepository: BaseRepository, ITodoRepository
         return result == 1;
     }
 
-    public async Task<int> CountTodosAsync(Expression<Func<TodoEntity, bool>> filter, bool onlyCompleted = false)
+    public async Task<int> CountTodosAsync(Expression<Func<TodoEntity, bool>> filter, bool countCompleted = false)
     {
         IQueryable<TodoEntity> countTodos = DbContext
             .Todos
             .AsNoTracking()
             .Where(filter);
 
-        if (onlyCompleted)
+        if (countCompleted)
         {
             return await countTodos
                 .IgnoreQueryFilters()
