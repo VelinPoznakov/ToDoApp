@@ -79,4 +79,34 @@ public class GroupRepository: BaseRepository, IGroupRepository
 
         return result == 1;
     }
+
+    public async Task<Group?> GetGroupById(Guid id, Expression<Func<Group, Group>>? projection = null, bool tracked = true)
+    {
+        IQueryable<Group> group = DbContext.Groups;
+
+        if (!tracked)
+        {
+            group = group.AsNoTracking();
+        }
+
+        if (projection != null)
+        {
+            return await group
+                .Where(g => g.Id == id)
+                .Select(projection)
+                .FirstOrDefaultAsync();
+        }
+
+        return await group
+            .FirstOrDefaultAsync(g => g.Id == id);
+    }
+
+    public async Task<bool> EditGroup(Group group)
+    {
+        DbContext.Groups.Update(group);
+
+        int result = await SaveChangesAsync();
+
+        return result == 1;
+    }
 }

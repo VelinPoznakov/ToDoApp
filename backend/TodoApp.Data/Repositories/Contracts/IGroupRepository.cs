@@ -18,4 +18,8 @@ public interface IGroupRepository
     Task<bool> DeleteGroupWithTodos(Group group);
 
     Task<bool> CreateGroup(Group group);
+
+    Task<Group?> GetGroupById(Guid id, Expression<Func<Group, Group>>? projection = null, bool tracked = true);
+
+    Task<bool> EditGroup(Group group);
 }

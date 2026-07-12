@@ -15,4 +15,8 @@ public interface IGroupService
     Task DeleteGroupAsync(Guid groupId);
 
     Task<Guid> CreateGroup(CreateEditGroupDto model, Guid userId);
+
+    Task<CreateEditGroupDto> GetGroupNameForEditTracked(Guid id);
+
+    Task EditGroup(Guid id, CreateEditGroupDto model);
 }

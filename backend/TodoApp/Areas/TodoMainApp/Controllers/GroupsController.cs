@@ -118,5 +118,72 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
 
             return RedirectToAction(nameof(Index), "Todo", new { id = groupId });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditGroup([FromRoute]Guid id)
+        {
+            if (string.IsNullOrWhiteSpace(id.ToString()))
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                CreateEditGroupDto group = await _groupService.GetGroupNameForEditTracked(id);
+
+                CreateEditGroupViewModel groupViewModel = new CreateEditGroupViewModel()
+                {
+                    GroupName = group.GroupName
+                };
+
+                return View(groupViewModel);
+            }
+            catch (EntityNotFoundException)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditGroup([FromForm] CreateEditGroupViewModel model, [FromRoute] Guid id)
+        {
+            if (string.IsNullOrEmpty(id.ToString()))
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            Guid userId = Guid.Parse(GetUserId()!);
+
+            bool isGroupExistingAndBelongToTheUser = await _groupService.GroupExistsAsync(id, userId);
+
+            if (!isGroupExistingAndBelongToTheUser)
+            {
+                return NotFound();
+            }
+
+            CreateEditGroupDto group = new CreateEditGroupDto()
+            {
+                GroupName = model.GroupName
+            };
+
+            try
+            {
+                await _groupService.EditGroup(id, group);
+
+                return RedirectToAction(nameof(Index), "Todo", new[] {id = id});
+            }
+            catch (DataPersistFail e)
+            {
+                ModelState.AddModelError(string.Empty, DataPersistFailErrorMessage);
+                _logger.LogError(e, string.Format(DataPersistFailErrorMessage, nameof(EditGroup)));
+
+                return View(model);
+            }
+        }
     }
 }

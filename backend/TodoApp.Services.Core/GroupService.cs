@@ -1,4 +1,5 @@
-﻿using TodoApp.Data.Repositories.Contracts;
+﻿using System.Linq.Expressions;
+using TodoApp.Data.Repositories.Contracts;
 using TodoApp.GCommon.Exceptions;
 using TodoApp.Models.Data;
 using TodoApp.Services.Core.Contracts;
@@ -91,5 +92,42 @@ public class GroupService: IGroupService
         }
 
         return newGroup.Id;
+    }
+
+    public async Task<CreateEditGroupDto> GetGroupNameForEditTracked(Guid id)
+    {
+        Group? group = await _groupRepository
+            .GetGroupById(id,
+                projection: g => new Group()
+                {
+                    Name = g.Name
+                });
+
+        if (group == null)
+        {
+            throw new EntityNotFoundException();
+        }
+
+        CreateEditGroupDto result = new CreateEditGroupDto()
+        {
+            GroupName = group.Name
+        };
+
+        return result;
+    }
+
+    public async Task EditGroup(Guid id, CreateEditGroupDto model)
+    {
+        Group? group = await _groupRepository.GetGroupById(id);
+
+        group!.Name = model.GroupName;
+        group!.UpdatedOn = DateTime.Now;
+
+        bool result = await _groupRepository.EditGroup(group);
+
+        if (!result)
+        {
+            throw new DataPersistFail();
+        }
     }
 }
