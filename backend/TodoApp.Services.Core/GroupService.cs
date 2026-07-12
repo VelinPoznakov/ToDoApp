@@ -50,14 +50,14 @@ public class GroupService: IGroupService
     public async Task DeleteGroupAsync(Guid groupId)
     {
         Group? group = await _groupRepository
-            .GetGroupByIdWithTodosAsync(groupId);
+            .GetGroupByIdWithTodosAsync(groupId, true);
 
         if (group == null)
         {
             throw new EntityNotFoundException();
         }
 
-        bool result = false;
+        bool result;
 
         if (group.Todos.Count != 0)
         {

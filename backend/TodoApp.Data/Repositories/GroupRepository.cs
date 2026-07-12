@@ -45,11 +45,17 @@ public class GroupRepository: BaseRepository, IGroupRepository
             .AnyAsync(filter);
     }
 
-    public async Task<Group?> GetGroupByIdWithTodosAsync(Guid id)
+    public async Task<Group?> GetGroupByIdWithTodosAsync(Guid id, bool includeCompleted = false)
     {
-        return await DbContext.Groups
-            .Include(t => t.Todos)
-            .FirstOrDefaultAsync(g => g.Id == id);
+        IQueryable<Group> group = DbContext.Groups
+            .Include(t => t.Todos);
+
+        if (includeCompleted)
+        {
+            group = group.IgnoreQueryFilters();
+        }
+        
+        return await group.FirstOrDefaultAsync(g => g.Id == id);
     }
 
     public async Task<bool> DeleteGroupAsync(Group group)
