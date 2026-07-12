@@ -126,6 +126,15 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
             {
                 return BadRequest();
             }
+            
+            Guid userId = Guid.Parse(GetUserId()!);
+            
+            bool isGroupOwner = await _groupService.GroupExistsAsync(id, userId);
+
+            if (!isGroupOwner)
+            {
+                return NotFound();
+            }
 
             try
             {
@@ -175,7 +184,11 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
             {
                 await _groupService.EditGroup(id, group);
 
-                return RedirectToAction(nameof(Index), "Todo", new[] {id = id});
+                return RedirectToAction(nameof(Index), "Todo", new { id = id });
+            }
+            catch (EntityNotFoundException)
+            {
+                return BadRequest();
             }
             catch (DataPersistFail e)
             {
