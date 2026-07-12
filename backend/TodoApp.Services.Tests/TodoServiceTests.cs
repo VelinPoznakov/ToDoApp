@@ -339,6 +339,36 @@ public class TodoServiceTests
     }
 
     [Fact]
+    public async Task CountTodos_OnlyCompleted_FilterMatchesOnlyUsersCompletedTodos()
+    {
+        // Captures the WHERE expression the service builds and runs it against
+        // sample todos - this pins the predicate itself (user AND completed),
+        // which a mock-only pass-through test cannot catch.
+        Guid userId = Guid.NewGuid();
+        Expression<Func<TodoEntity, bool>>? captured = null;
+
+        _repo.Setup(r => r.CountTodosAsync(It.IsAny<Expression<Func<TodoEntity, bool>>>(), true))
+             .Callback<Expression<Func<TodoEntity, bool>>, bool>((f, _) => captured = f)
+             .ReturnsAsync(0);
+
+        var service = CreateService();
+        await service.CountTodos(userId, true);
+
+        Assert.NotNull(captured);
+        Func<TodoEntity, bool> predicate = captured!.Compile();
+
+        TodoEntity completedMine = SampleTodo(userId, Guid.NewGuid());
+        completedMine.Status = Status.Completed;
+        TodoEntity pendingMine = SampleTodo(userId, Guid.NewGuid());
+        TodoEntity completedForeign = SampleTodo(Guid.NewGuid(), Guid.NewGuid());
+        completedForeign.Status = Status.Completed;
+
+        Assert.True(predicate(completedMine));
+        Assert.False(predicate(pendingMine));
+        Assert.False(predicate(completedForeign));
+    }
+
+    [Fact]
     public async Task GetTodosAfterDueDate_MapsGroupName()
     {
         Guid userId = Guid.NewGuid();
