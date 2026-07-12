@@ -11,7 +11,7 @@ public interface IGroupRepository
 
     Task<bool> ExistsAsync(Expression<Func<Group, bool>> filter);
 
-    Task<Group?> GetGroupByIdWithTodosAsync(Guid id, bool includeCompleted = false);
+    Task<Group?> GetGroupByIdWithTodosAsync(Guid id);
 
     Task<bool> DeleteGroupAsync(Group group);
 

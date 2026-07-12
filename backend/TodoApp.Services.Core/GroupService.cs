@@ -50,7 +50,7 @@ public class GroupService: IGroupService
     public async Task DeleteGroupAsync(Guid groupId)
     {
         Group? group = await _groupRepository
-            .GetGroupByIdWithTodosAsync(groupId, true);
+            .GetGroupByIdWithTodosAsync(groupId);
 
         if (group == null)
         {
@@ -119,6 +119,11 @@ public class GroupService: IGroupService
     public async Task EditGroup(Guid id, CreateEditGroupDto model)
     {
         Group? group = await _groupRepository.GetGroupById(id);
+
+        if (group == null)
+        {
+            throw new EntityNotFoundException();
+        }
 
         group!.Name = model.GroupName;
         group!.UpdatedOn = DateTime.Now;
