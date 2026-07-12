@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Web.ViewModels", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Web.Infrastructure", "TodoApp.Web.Infrastructure\TodoApp.Web.Infrastructure.csproj", "{DB146380-8332-4299-8902-B4FABB6A99D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Services.Tests", "TodoApp.Services.Tests\TodoApp.Services.Tests.csproj", "{07EB36EE-BB3D-429F-8392-B36D69852A98}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,18 @@ Global
 		{DB146380-8332-4299-8902-B4FABB6A99D4}.Release|x64.Build.0 = Release|Any CPU
 		{DB146380-8332-4299-8902-B4FABB6A99D4}.Release|x86.ActiveCfg = Release|Any CPU
 		{DB146380-8332-4299-8902-B4FABB6A99D4}.Release|x86.Build.0 = Release|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Debug|x64.Build.0 = Debug|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Debug|x86.Build.0 = Debug|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Release|x64.ActiveCfg = Release|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Release|x64.Build.0 = Release|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Release|x86.ActiveCfg = Release|Any CPU
+		{07EB36EE-BB3D-429F-8392-B36D69852A98}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
