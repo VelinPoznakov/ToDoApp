@@ -389,7 +389,7 @@
         margin-left:0;
     }
     .group-edit,
-    .group-delete-form{
+    .group-delete{
         flex:1 1 0;
         min-width:0;
     }

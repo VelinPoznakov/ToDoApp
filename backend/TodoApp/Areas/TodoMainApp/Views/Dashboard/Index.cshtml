@@ -6,6 +6,7 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/dashboard/dashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/todo-dashboard-deatail/todo-dashboard-details.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/delete-todo-warning/delete-todo-warning.css" asp-append-version="true" />
 }
 
 <div class="dashboard-page">
@@ -117,3 +118,10 @@
     </div>
 
 </div>
+
+<form method="post" asp-antiforgery="true" hidden></form>
+<partial name="_DeleteTodoWarningPartial" model='("To Do", (string?)null, string.Empty)' />
+
+@section Scripts {
+    <script src="~/js/delete-warning.js" asp-append-version="true"></script>
+}

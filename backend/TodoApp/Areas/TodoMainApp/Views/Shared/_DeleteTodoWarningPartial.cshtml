@@ -1,0 +1,59 @@
+@model (string deleteItem, string? todoId, string groupId)
+<div class="delete-warning" data-delete-modal>
+
+    <div class="delete-warning__overlay" data-delete-cancel></div>
+
+    <div class="delete-warning__dialog"
+         role="alertdialog"
+         aria-modal="true"
+         aria-labelledby="deleteWarningTitle"
+         aria-describedby="deleteWarningText">
+
+        <div class="delete-warning__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+            </svg>
+        </div>
+
+        <h3 class="delete-warning__title" id="deleteWarningTitle">Delete this @Model.deleteItem?</h3>
+        <p class="delete-warning__text" id="deleteWarningText">
+            This action cannot be undone. The todo will be permanently removed.
+        </p>
+
+        <div class="delete-warning__actions">
+
+            <button type="button" class="delete-warning__btn delete-warning__btn--cancel" data-delete-cancel>
+                Cancel
+            </button>
+            
+            @if (Model.deleteItem == "Group")
+            {
+                <button type="button" class="delete-warning__btn delete-warning__btn--confirm" data-delete-confirm
+                        asp-area="TodoMainApp"
+                        asp-controller="Groups"
+                        asp-action="DeleteGroup"
+                        asp-route-id="@Model.groupId">
+                    Delete
+                </button>
+            }
+            else
+            {
+                <button type="button" class="delete-warning__btn delete-warning__btn--confirm" data-delete-confirm
+                        asp-area="TodoMainApp"
+                        asp-controller="Todo"
+                        asp-action="Delete"
+                        asp-route-groupId="@Model.groupId"
+                        asp-route-todoId="@Model.todoId">
+                    Delete
+                </button>
+            }
+            
+
+        </div>
+
+    </div>
+
+</div>

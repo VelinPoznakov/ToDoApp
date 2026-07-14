@@ -1,0 +1,153 @@
+:root{
+    --brand:#6C4CFF;
+    --card-bg:#ffffff;
+    --card-border:rgba(15,23,42,0.06);
+    --input-border:rgba(15,23,42,0.08);
+    --text-dark:#111827;
+    --text-muted:#6b7280;
+    --danger:#EF4444;
+    --danger-dark:#dc2626;
+}
+
+/* Prevent the page from scrolling while the warning is open */
+body.is-modal-open{
+    overflow:hidden;
+}
+
+/* ===== Modal root (hidden until JS adds .is-open) ===== */
+.delete-warning{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+    padding:1rem;
+}
+.delete-warning.is-open{
+    display:flex;
+}
+
+/* ===== Blurred backdrop ===== */
+.delete-warning__overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(15,23,42,0.45);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    animation:delete-warning-fade 0.15s ease;
+}
+
+/* ===== Dialog card ===== */
+.delete-warning__dialog{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:24rem;
+    background:var(--card-bg);
+    border:0.0625rem solid var(--card-border);
+    border-radius:0.875rem;
+    box-shadow:0 1.25rem 2.5rem rgba(15,23,42,0.18);
+    padding:1.75rem 1.5rem 1.5rem;
+    text-align:center;
+    animation:delete-warning-pop 0.18s ease;
+}
+
+/* ===== Danger icon badge ===== */
+.delete-warning__icon{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:3.25rem;
+    height:3.25rem;
+    margin:0 auto 1rem;
+    border-radius:50%;
+    background:rgba(239,68,68,0.1);
+    color:var(--danger);
+}
+.delete-warning__icon svg{
+    width:1.5rem;
+    height:1.5rem;
+}
+
+/* ===== Text ===== */
+.delete-warning__title{
+    margin:0 0 0.5rem;
+    font-size:1.25rem;
+    font-weight:700;
+    color:var(--text-dark);
+}
+.delete-warning__text{
+    margin:0 0 1.5rem;
+    font-size:0.9rem;
+    line-height:1.5;
+    color:var(--text-muted);
+}
+
+/* ===== Actions ===== */
+.delete-warning__actions{
+    display:flex;
+    justify-content:center;
+    gap:0.75rem;
+}
+.delete-warning__btn{
+    flex:1 1 0;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:0.6rem 1.25rem;
+    border:none;
+    border-radius:0.5rem;
+    font-family:inherit;
+    font-size:0.875rem;
+    font-weight:600;
+    text-decoration:none;
+    white-space:nowrap;
+    cursor:pointer;
+    transition:background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.delete-warning__btn:focus{
+    outline:none;
+}
+.delete-warning__btn--cancel{
+    background:var(--card-bg);
+    border:0.0625rem solid var(--input-border);
+    color:#4b5563;
+}
+.delete-warning__btn--cancel:hover{
+    background:#f3f4f6;
+    color:var(--text-dark);
+}
+.delete-warning__btn--confirm{
+    background:var(--danger);
+    color:#fff;
+}
+.delete-warning__btn--confirm:hover{
+    background:var(--danger-dark);
+    transform:translateY(-1px);
+}
+
+/* ===== Animations ===== */
+@keyframes delete-warning-fade{
+    from{ opacity:0; }
+    to{ opacity:1; }
+}
+@keyframes delete-warning-pop{
+    from{ opacity:0; transform:translateY(0.5rem) scale(0.97); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* ===== Mobile ===== */
+@media (max-width:30rem){
+    .delete-warning__dialog{
+        padding:1.5rem 1.25rem 1.25rem;
+    }
+
+    /* Stack the buttons full-width */
+    .delete-warning__actions{
+        flex-direction:column-reverse;
+    }
+    .delete-warning__btn{
+        width:100%;
+    }
+}
