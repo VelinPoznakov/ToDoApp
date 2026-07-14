@@ -1,0 +1,229 @@
+:root{
+    --brand:#6C4CFF;
+    --brand-dark:#5b3df0;
+    --card-bg:#ffffff;
+    --card-border:rgba(15,23,42,0.06);
+    --input-border:rgba(15,23,42,0.08);
+    --text-dark:#111827;
+    --text-muted:#6b7280;
+    --danger:#EF4444;
+}
+
+.create-page{
+    max-width:48rem;
+    padding:0.5rem 0;
+}
+
+/* ===== Page header: back arrow + title + subtitle ===== */
+.create-header{
+    display:flex;
+    align-items:center;
+    gap:0.875rem;
+    margin-bottom:1.25rem;
+}
+.create-header__back{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:2.25rem;
+    height:2.25rem;
+    flex-shrink:0;
+    background:var(--card-bg);
+    border:0.0625rem solid var(--input-border);
+    border-radius:0.625rem;
+    color:var(--text-dark);
+    text-decoration:none;
+    transition:background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.create-header__back:hover{
+    background:#f3f4f6;
+    color:var(--brand);
+}
+.create-header__back svg{
+    width:1.1rem;
+    height:1.1rem;
+}
+.create-header__title{
+    margin:0;
+    font-size:1.375rem;
+    font-weight:700;
+    color:var(--text-dark);
+}
+.create-header__subtitle{
+    margin:0.125rem 0 0 0;
+    font-size:0.875rem;
+    color:var(--text-muted);
+}
+
+/* ===== Card ===== */
+.create-card{
+    background:var(--card-bg);
+    border:0.0625rem solid var(--card-border);
+    border-radius:0.875rem;
+    box-shadow:0 0.5rem 1rem rgba(15,23,42,0.04);
+    padding:1.5rem;
+}
+
+/* ===== Form ===== */
+.create-form{
+    display:flex;
+    flex-direction:column;
+    gap:1.25rem;
+}
+
+/* Server-side error summary (hidden while valid) */
+.create-form__summary.validation-summary-valid{
+    display:none;
+}
+.create-form__summary.validation-summary-errors{
+    padding:0.75rem 1rem;
+    background:rgba(239,68,68,0.08);
+    border:0.0625rem solid rgba(239,68,68,0.2);
+    border-radius:0.5rem;
+    color:var(--danger);
+    font-size:0.875rem;
+}
+.create-form__summary.validation-summary-errors ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+
+/* Fields */
+.form-field{
+    display:flex;
+    flex-direction:column;
+    gap:0.4rem;
+}
+.form-field__label{
+    font-size:0.875rem;
+    font-weight:600;
+    color:var(--text-dark);
+}
+
+.form-field__input{
+    width:100%;
+    padding:0.6rem 0.75rem;
+    background:var(--card-bg);
+    border:0.0625rem solid var(--input-border);
+    border-radius:0.5rem;
+    font-family:inherit;
+    font-size:0.875rem;
+    color:var(--text-dark);
+    transition:border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.form-field__input::placeholder{
+    color:#9ca3af;
+}
+.form-field__input:focus{
+    outline:none;
+    border-color:var(--brand);
+    box-shadow:0 0 0 0.1875rem rgba(108,76,255,0.12);
+}
+
+.form-field__input--textarea{
+    min-height:6.5rem;
+    resize:vertical;
+    line-height:1.5;
+}
+
+/* Select with custom chevron */
+.form-field__input--select{
+    appearance:none;
+    -webkit-appearance:none;
+    padding-right:2.5rem;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 0.75rem center;
+    background-size:1rem;
+    cursor:pointer;
+}
+
+/* Two columns: Priority | Due Date */
+.form-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+}
+
+/* Validation states (classes added by jquery-validation-unobtrusive) */
+.form-field__error{
+    font-size:0.8rem;
+    color:var(--danger);
+}
+.form-field__error:empty{
+    display:none;
+}
+.form-field__input.input-validation-error{
+    border-color:var(--danger);
+}
+.form-field__input.input-validation-error:focus{
+    box-shadow:0 0 0 0.1875rem rgba(239,68,68,0.12);
+}
+
+/* ===== Actions ===== */
+.create-actions{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap:0.75rem;
+    margin-top:0.25rem;
+}
+.create-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:0.6rem 1.25rem;
+    border:none;
+    border-radius:0.5rem;
+    font-size:0.875rem;
+    font-weight:600;
+    text-decoration:none;
+    white-space:nowrap;
+    cursor:pointer;
+    transition:background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.create-btn:focus{
+    outline:none;
+}
+
+.create-btn--cancel{
+    background:var(--card-bg);
+    border:0.0625rem solid var(--input-border);
+    color:#4b5563;
+}
+.create-btn--cancel:hover{
+    background:#f3f4f6;
+    color:var(--text-dark);
+}
+
+.create-btn--save{
+    background:var(--brand);
+    color:#fff;
+}
+.create-btn--save:hover{
+    background:var(--brand-dark);
+    transform:translateY(-1px);
+}
+
+/* ===== Mobile ===== */
+@media (max-width:48rem){
+    .create-header__title{
+        font-size:1.2rem;
+    }
+
+    .create-card{
+        padding:1.25rem 1rem;
+    }
+
+    /* Priority / Due Date stack */
+    .form-row{
+        grid-template-columns:1fr;
+    }
+
+    /* full-width buttons */
+    .create-actions{
+        flex-direction:column;
+        align-items:stretch;
+    }
+}
