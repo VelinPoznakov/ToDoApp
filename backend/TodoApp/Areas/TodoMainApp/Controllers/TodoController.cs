@@ -275,6 +275,8 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
             }
 
             Guid userId = Guid.Parse(GetUserId()!);
+            
+            // remove that later use tempdata
 
             bool groupExistsAndBelongToUser = await _groupService.GroupExistsAsync(groupId, userId);
 

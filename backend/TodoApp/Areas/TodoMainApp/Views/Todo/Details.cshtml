@@ -2,6 +2,10 @@
 @using TodoApp.Models.Todo
 @model TodoDetailsViewmodel
 
+@{
+    Guid todoId = Guid.Parse(ViewContext.RouteData.Values["id"]!.ToString()!);
+}
+
 @section Styles {
     <link rel="stylesheet" href="~/css/todo-details/todo-details.css" asp-append-version="true" />
 }
@@ -9,12 +13,7 @@
 <div class="details-page">
 
     <div class="details-header">
-        <a class="details-header__back"
-           asp-area="TodoMainApp"
-           asp-controller="Todo"
-           asp-action="Index"
-           asp-route-id="@Model.GroupId"
-           aria-label="Back to todos">
+        <a class="details-header__back" href="#" data-back aria-label="Go back">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="19" y1="12" x2="5" y2="12"/>
                 <polyline points="12 19 5 12 12 5"/>
@@ -65,19 +64,19 @@
         </div>
 
         <div class="details-actions">
-            <button type="button" class="details-btn details-btn--edit">
+            <a class="details-btn details-btn--edit"
+               asp-area="TodoMainApp"
+               asp-controller="Todo"
+               asp-action="Edit"
+               asp-route-id="@todoId">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M12 20h9"/>
                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
                 </svg>
                 <span>Edit</span>
-            </button>
+            </a>
             <button type="button" class="details-btn details-btn--delete">Delete</button>
-            <a class="details-btn details-btn--back"
-               asp-area="TodoMainApp"
-               asp-controller="Todo"
-               asp-action="Index"
-               asp-route-id="@Model.GroupId">Back</a>
+            <a class="details-btn details-btn--back" href="#" data-back>Back</a>
         </div>
 
     </div>
