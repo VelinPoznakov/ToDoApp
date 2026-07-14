@@ -6,4 +6,5 @@ public class TodoWithGroupNameViewModel: TodoViewModel
 {
     public string GroupName { get; set; } = null!;
 
+    public Guid GroupId { get; set; }
 }

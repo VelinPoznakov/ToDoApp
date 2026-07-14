@@ -243,6 +243,7 @@ public class TodoService: ITodoService
                     Priority = t.Priority,
                     Status = t.Status,
                     DueDate = t.DueDate,
+                    GroupId = t.GroupId,
                     Group = t.Group
                 }
             );
@@ -254,7 +255,8 @@ public class TodoService: ITodoService
             Priority = t.Priority.ToString(),
             Status = t.Status.ToString(),
             DueDate = t.DueDate.ToString(DateFormat),
-            GroupName = t.Group.Name
+            GroupName = t.Group.Name,
+            GroupId = t.GroupId
         });
 
         return result;

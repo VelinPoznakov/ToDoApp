@@ -33,7 +33,8 @@ public class DashboardController: BaseController
                 Priority = t.Priority,
                 Status = t.Status,
                 DueDate = t.DueDate,
-                GroupName = t.GroupName
+                GroupName = t.GroupName,
+                GroupId = t.GroupId
             });
 
         int countPendingTodos = await _todoService
