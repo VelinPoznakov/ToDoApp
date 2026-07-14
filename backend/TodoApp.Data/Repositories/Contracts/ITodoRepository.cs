@@ -22,4 +22,9 @@ public interface ITodoRepository
     Task<int> CountTodosAsync(
         Expression<Func<TodoEntity, bool>> filter,
         bool countCompleted = false);
+
+    Task<IEnumerable<TodoEntity>> GetAllCompletedTodos(
+        Expression<Func<TodoEntity, TodoEntity>>? projection = null,
+        bool tracked = false,
+        bool includeGroup = false);
 }

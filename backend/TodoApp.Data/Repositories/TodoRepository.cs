@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApp.Data.Repositories.Contracts;
 using TodoApp.Models.Data;
+using TodoApp.Models.Data.Enums;
 
 namespace TodoApp.Data.Repositories;
 
@@ -122,5 +123,43 @@ public class TodoRepository: BaseRepository, ITodoRepository
         }
 
         return await countTodos.CountAsync();
+    }
+
+    public async Task<IEnumerable<TodoEntity>> GetAllCompletedTodos(
+        Expression<Func<TodoEntity, TodoEntity>>? projection = null,
+        bool tracked = false,
+        bool includeGroup = false)
+    {
+        IQueryable<TodoEntity> todosAsQueryable = DbContext
+            .Todos
+            .IgnoreQueryFilters()
+            .AsQueryable();
+
+        if (!tracked)
+        {
+            todosAsQueryable = todosAsQueryable.AsNoTracking();
+        }
+
+        if (includeGroup)
+        {
+            todosAsQueryable = todosAsQueryable
+                .Include(g => g.Group);
+        }
+
+        todosAsQueryable = todosAsQueryable
+            .Where(t => t.Status == Status.Completed)
+            .OrderBy(t => t.Priority)
+            .ThenBy(t => t.DueDate);
+
+        if (projection != null)
+        {
+            todosAsQueryable = todosAsQueryable
+                .Select(projection);
+        }
+        
+        IEnumerable<TodoEntity> result = await todosAsQueryable
+            .ToArrayAsync();
+        
+        return  result;
     }
 }
