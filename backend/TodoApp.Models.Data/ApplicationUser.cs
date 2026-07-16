@@ -17,5 +17,8 @@ namespace TodoApp.Models.Data
 
         public virtual ICollection<TodoEntity> Todos { get; set; } 
             = new List<TodoEntity>();
+        
+        public virtual ICollection<SupportMessage> SupportMessages { get; set; }
+            = new List<SupportMessage>();
     }
 }
