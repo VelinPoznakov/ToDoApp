@@ -10,8 +10,4 @@ public class AllTodoDto
     public string Status { get; set; } = null!;
 
     public string DueDate { get; set; } = null!;
-    public string GroupName { get; set; } = null!;
-
-
-
 }

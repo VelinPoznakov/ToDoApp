@@ -1,10 +1,19 @@
-﻿using TodoApp.Services.Dtos;
+﻿using TodoApp.Models.Data;
+using TodoApp.Services.Dtos;
 
 namespace TodoApp.Services.Core.Contracts;
 
 public interface ITodoService
 {
-    Task<IEnumerable<AllTodoDto>> GetAllTodosOrderByPriorityDueDateAsync(Guid userId, Guid groupId, bool ignoreQueryFilter = false, bool onlyCompleted = false);
+    Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllTodosOrderByPriorityDueDateAsync(
+        Guid userId,
+        Guid groupId);
+    Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllCompletedOrderByPriorityDueDateAsync(
+        Guid userId,
+        Guid groupId);
+    Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllPendingTodosOrderByPriorityDueDateAsync(
+        Guid userId,
+        Guid groupId);
     Task<TodoDetailsDto?> GetTodoDetailsAsync(Guid userId, Guid todoId, bool track = false);
     Task AddTodoAsync(CreateEditTodoDto createTodoDto, Guid userId);
     Task EditTodoAsync(Guid userId, Guid todoId, CreateEditTodoDto editTodoDto);

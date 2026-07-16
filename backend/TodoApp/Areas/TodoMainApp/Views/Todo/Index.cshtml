@@ -1,3 +1,4 @@
+@using TodoApp.Models.Data.Enums
 @using TodoApp.Web.ViewModels.Todo
 @model AllTodosViewModel
 
@@ -9,7 +10,7 @@
 <div class="todo-page">
 
     <div class="page-header">
-        <h3 class="page-header__title">GROUP NAME</h3>
+        <h3 class="page-header__title">@Model.GroupName</h3>
 
         <div class="page-header__actions">
             <a class="group-edit"
@@ -44,14 +45,21 @@
     <div class="todo-toolbar">
 
         <div class="todo-tabs">
-            <button type="button" class="todo-tab">All</button>
-            <button type="button" class="todo-tab">Pending</button>
+            <a class="todo-tab"
+               asp-area="TodoMainApp"
+               asp-controller="Todo"
+               asp-action="Index"
+               asp-route-id="@Model.GroupId">All</a>
+            <a class="todo-tab"
+               asp-area="TodoMainApp"
+               asp-controller="Todo"
+               asp-action="Pending"
+               asp-route-id="@Model.GroupId">Pending</a>
             <a class="todo-tab"
                asp-area="TodoMainApp"
                asp-controller="Todo"
                asp-action="Completed"
                asp-route-id="@Model.GroupId">Completed</a>
-            <button type="button" class="todo-tab">Important</button>
         </div>
 
         <div class="todo-toolbar__right">
@@ -93,26 +101,51 @@
             @foreach (TodoViewModel todo in Model.Todos)
             {
                 <div class="todo-row">
-
-                    <div class="todo-row__title">
-                        <form class="todo-row__complete"
-                              asp-area="TodoMainApp"
-                              asp-controller="Todo"
-                              asp-action="Complete"
-                              asp-route-id="@todo.Id"
-                              asp-route-groupId="@Model.GroupId"
-                              method="post">
-                            <input type="checkbox"
-                                   class="todo-row__check"
-                                   onchange="this.form.submit()"
-                                   aria-label="Mark complete" />
-                        </form>
-                        <a class="todo-row__name"
-                           asp-area="TodoMainApp"
-                           asp-controller="Todo"
-                           asp-action="Details"
-                           asp-route-id="@todo.Id">@todo.Name</a>
-                    </div>
+                    
+                    @if (todo.Status == nameof(Status.Pending))
+                    {
+                        <div class="todo-row__title">
+                            <form class="todo-row__complete"
+                                  asp-area="TodoMainApp"
+                                  asp-controller="Todo"
+                                  asp-action="Complete"
+                                  asp-route-id="@todo.Id"
+                                  asp-route-groupId="@Model.GroupId"
+                                  method="post">
+                                <input type="checkbox"
+                                       class="todo-row__check"
+                                       onchange="this.form.submit()"
+                                       aria-label="Mark complete"/>
+                            </form>
+                            <a class="todo-row__name"
+                               asp-area="TodoMainApp"
+                               asp-controller="Todo"
+                               asp-action="Details"
+                               asp-route-id="@todo.Id">@todo.Name</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="todo-row__title">
+                            <form class="todo-row__complete"
+                                  asp-area="TodoMainApp"
+                                  asp-controller="Todo"
+                                  asp-action="Activate"
+                                  asp-route-id="@todo.Id"
+                                  asp-route-groupId="@Model.GroupId"
+                                  method="post">
+                                <input type="checkbox"
+                                       class="todo-row__check"
+                                       onchange="this.form.submit()"
+                                       aria-label="Mark complete"/>
+                            </form>
+                            <a class="todo-row__name"
+                               asp-area="TodoMainApp"
+                               asp-controller="Todo"
+                               asp-action="Details"
+                               asp-route-id="@todo.Id">@todo.Name</a>
+                        </div>
+                    }
 
                     <p class="todo-row__cell todo-row__status todo-row__status--@(todo.Status?.ToLower())" data-label="Status">@todo.Status</p>
                     <p class="todo-row__cell todo-row__priority todo-row__priority--@(todo.Priority?.ToLower())" data-label="Priority">@todo.Priority</p>

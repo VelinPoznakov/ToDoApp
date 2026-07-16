@@ -11,15 +11,6 @@ using static TodoApp.GCommon.ModelsErrorMessages;
 using static TodoApp.GCommon.ErrorMessages;
 using static TodoApp.GCommon.ApplicationConstants;
 
-// reformat gcommon dll
-// finish the controller
-// start the views
-// make forgot password
-// understand cookies and sessions
-// start admin area dev
-// try to make about page
-// try to make feedback page
-
 namespace TodoApp.Areas.TodoMainApp.Controllers
 {
     public class TodoController : BaseController
@@ -41,7 +32,7 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromRoute]Guid id)
         {
-            if(id.ToString().IsNullOrEmpty())
+            if (id.ToString().IsNullOrEmpty())
             {
                 return BadRequest();
             }
@@ -55,23 +46,31 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                 return BadRequest();
             }
 
-            IEnumerable<AllTodoDto> alltodos = await _todoService
-                .GetAllTodosOrderByPriorityDueDateAsync(userId, id);
-
-            AllTodosViewModel result = new AllTodosViewModel()
+            try
             {
-                GroupId = id,
-                Todos = alltodos.Select(t => new TodoViewModel()
+                (IEnumerable<AllTodoDto> allTodos, string groupName) = await _todoService
+                    .GetAllTodosOrderByPriorityDueDateAsync(userId, id);
+                
+                AllTodosViewModel result = new AllTodosViewModel()
                 {
-                    Id = t.Id,
-                    Name = t.Name,
-                    DueDate = t.DueDate,
-                    Priority = t.Priority,
-                    Status = t.Status
-                })
-            };
+                    GroupId = id,
+                    Todos = allTodos.Select(t => new TodoViewModel()
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        DueDate = t.DueDate,
+                        Priority = t.Priority,
+                        Status = t.Status
+                    }),
+                    GroupName = groupName
+                };
 
-            return View(result);
+                return View(result);
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet]
@@ -110,6 +109,50 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
             };
 
             return View(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Pending([FromRoute] Guid id)
+        {
+            if (id.ToString().IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+
+            Guid userId = Guid.Parse(GetUserId()!);
+            
+            bool groupExistsAndBelongToUser = await _groupService.GroupExistsAsync(id, userId);
+
+            if (!groupExistsAndBelongToUser)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                (IEnumerable<AllTodoDto> allTodos, string groupName) = await _todoService
+                    .GetAllPendingTodosOrderByPriorityDueDateAsync(userId, id);
+                
+                AllTodosViewModel result = new AllTodosViewModel()
+                {
+                    GroupId = id,
+                    Todos = allTodos.Select(t => new TodoViewModel()
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        DueDate = t.DueDate,
+                        Priority = t.Priority,
+                        Status = t.Status
+                    }),
+                    GroupName = groupName
+                };
+
+                return View(result);
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet]
@@ -322,27 +365,31 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                 return BadRequest();
             }
 
-            IEnumerable<AllTodoDto> allTodos = await _todoService
-                .GetAllTodosOrderByPriorityDueDateAsync(
-                    userId,
-                    id,
-                    true,
-                    true);
-
-            AllTodosViewModel result = new AllTodosViewModel()
+            try
             {
-                GroupId = id,
-                Todos = allTodos.Select(t => new TodoViewModel()
+                (IEnumerable<AllTodoDto> allTodos, string groupName) = await _todoService
+                    .GetAllCompletedOrderByPriorityDueDateAsync(userId, id);
+                
+                AllTodosViewModel result = new AllTodosViewModel()
                 {
-                    Id = t.Id,
-                    Name = t.Name,
-                    DueDate = t.DueDate,
-                    Priority = t.Priority,
-                    Status = t.Status
-                })
-            };
+                    GroupId = id,
+                    Todos = allTodos.Select(t => new TodoViewModel()
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        DueDate = t.DueDate,
+                        Priority = t.Priority,
+                        Status = t.Status
+                    }),
+                    GroupName = groupName
+                };
 
-            return View(result);
+                return View(result);
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]
@@ -369,7 +416,7 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
                 return RedirectToAction(nameof(Index), new { id = groupId });
             }
 
-            return RedirectToAction(nameof(Index), new { id = groupId });
+            return RedirectToAction(nameof(Pending), new { id = groupId });
         }
 
         [HttpPost]

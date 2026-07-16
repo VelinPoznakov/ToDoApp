@@ -6,7 +6,7 @@ using TodoApp.Models.Data.Enums;
 
 namespace TodoApp.Data.Repositories;
 
-public class TodoRepository: BaseRepository, ITodoRepository
+public class TodoRepository : BaseRepository, ITodoRepository
 {
     public TodoRepository(TodoDbContext dbContext) : base(dbContext)
     {
@@ -59,7 +59,8 @@ public class TodoRepository: BaseRepository, ITodoRepository
         return await todos.ToArrayAsync();
     }
 
-    public async Task<TodoEntity?> GetTodoAsync(Expression<Func<TodoEntity, bool>> filterQuery, bool ignoreQueryFilter = false, bool tracking = false)
+    public async Task<TodoEntity?> GetTodoAsync(Expression<Func<TodoEntity, bool>> filterQuery,
+        bool ignoreQueryFilter = false, bool tracking = false)
     {
         IQueryable<TodoEntity> todoQuery = DbContext
             .Todos
@@ -79,7 +80,7 @@ public class TodoRepository: BaseRepository, ITodoRepository
         }
 
         TodoEntity? todo = await todoQuery
-            .SingleOrDefaultAsync(filterQuery);
+            .FirstOrDefaultAsync(filterQuery);
 
         return todo;
     }
@@ -123,43 +124,5 @@ public class TodoRepository: BaseRepository, ITodoRepository
         }
 
         return await countTodos.CountAsync();
-    }
-
-    public async Task<IEnumerable<TodoEntity>> GetAllCompletedTodos(
-        Expression<Func<TodoEntity, TodoEntity>>? projection = null,
-        bool tracked = false,
-        bool includeGroup = false)
-    {
-        IQueryable<TodoEntity> todosAsQueryable = DbContext
-            .Todos
-            .IgnoreQueryFilters()
-            .AsQueryable();
-
-        if (!tracked)
-        {
-            todosAsQueryable = todosAsQueryable.AsNoTracking();
-        }
-
-        if (includeGroup)
-        {
-            todosAsQueryable = todosAsQueryable
-                .Include(g => g.Group);
-        }
-
-        todosAsQueryable = todosAsQueryable
-            .Where(t => t.Status == Status.Completed)
-            .OrderBy(t => t.Priority)
-            .ThenBy(t => t.DueDate);
-
-        if (projection != null)
-        {
-            todosAsQueryable = todosAsQueryable
-                .Select(projection);
-        }
-        
-        IEnumerable<TodoEntity> result = await todosAsQueryable
-            .ToArrayAsync();
-        
-        return  result;
     }
 }

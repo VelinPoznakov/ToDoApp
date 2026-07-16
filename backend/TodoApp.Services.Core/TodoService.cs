@@ -13,30 +13,19 @@ namespace TodoApp.Services.Core;
 public class TodoService: ITodoService
 {
     private readonly ITodoRepository _todoRepository;
+    private  readonly IGroupRepository _groupRepository;
 
-    public TodoService(ITodoRepository todoRepository)
+    public TodoService(ITodoRepository todoRepository,  IGroupRepository groupRepository)
     {
         _todoRepository = todoRepository;
+        _groupRepository = groupRepository;
     }
 
-    public async Task<IEnumerable<AllTodoDto>> GetAllTodosOrderByPriorityDueDateAsync(
-        Guid userId, Guid groupId, bool ignoreQueryFilter = false, bool onlyCompleted = false)
+    public async Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllTodosOrderByPriorityDueDateAsync(
+        Guid userId, Guid groupId)
     {
-        Expression<Func<TodoEntity, bool>> filter;
-
-        if (onlyCompleted)
-        {
-            filter =
-                u => u.UserId == userId
-                     && u.Group.Id == groupId
-                     && u.Status == Status.Completed;
-        }
-        else
-        {
-            filter =
-                u => u.UserId == userId
-                     && u.Group.Id == groupId;
-        }
+        Expression<Func<TodoEntity, bool>> filter = u => u.UserId == userId
+                                                         && u.Group.Id == groupId;
 
         IEnumerable<TodoEntity> todos = await _todoRepository
             .GetAllTodoNoTracking(
@@ -49,9 +38,23 @@ public class TodoService: ITodoService
                     Status = t.Status,
                     DueDate = t.DueDate
                 },
-                ignoreQueryFilter: ignoreQueryFilter
+                ignoreQueryFilter: true
             );
+        
+        Group? group = await _groupRepository.GetGroupById(
+            groupId,
+            projection: g => new Group()
+            {
+                Name = g.Name
+            },
+            false
+        );
 
+        if (group == null)
+        {
+            throw new EntityNotFoundException();
+        }
+        
         IEnumerable<AllTodoDto> result = todos.Select(t => new AllTodoDto()
         {
             Id = t.Id,
@@ -61,8 +64,93 @@ public class TodoService: ITodoService
             DueDate = t.DueDate.ToString(DateFormat)
         });
 
-        return result;
+        return (result, group.Name);
+    }
 
+    public async Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllCompletedOrderByPriorityDueDateAsync(Guid userId, Guid groupId)
+    {
+        IEnumerable<TodoEntity> todos = await _todoRepository
+            .GetAllTodoNoTracking(
+                filterQuery: t => t.UserId == userId
+                                  && t.Group.Id == groupId
+                                  && t.Status == Status.Completed,
+                projectionQuery: t => new TodoEntity
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Priority = t.Priority,
+                    Status = t.Status,
+                    DueDate = t.DueDate,
+                },
+                ignoreQueryFilter: true
+            );
+
+        Group? group = await _groupRepository.GetGroupById(
+            groupId,
+            projection: g => new Group()
+            {
+                Name = g.Name
+            },
+            false
+        );
+
+        if (group == null)
+        {
+            throw new EntityNotFoundException();
+        }
+        
+        IEnumerable<AllTodoDto> result = todos.Select(t => new AllTodoDto()
+        {
+            Id = t.Id,
+            Name = t.Name,
+            Priority = t.Priority.ToString(),
+            Status = t.Status.ToString(),
+            DueDate = t.DueDate.ToString(DateFormat)
+        });
+
+        return (result, group.Name);
+    }
+
+    public async Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllPendingTodosOrderByPriorityDueDateAsync(Guid userId, Guid groupId)
+    {
+        IEnumerable<TodoEntity> todos = await _todoRepository
+            .GetAllTodoNoTracking(
+                filterQuery: t => t.UserId == userId
+                                  && t.Group.Id == groupId,
+                projectionQuery: t => new TodoEntity
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Priority = t.Priority,
+                    Status = t.Status,
+                    DueDate = t.DueDate,
+                }
+            );
+
+        Group? group = await _groupRepository.GetGroupById(
+            groupId,
+            projection: g => new Group()
+            {
+                Name = g.Name
+            },
+            false
+        );
+
+        if (group == null)
+        {
+            throw new EntityNotFoundException();
+        }
+        
+        IEnumerable<AllTodoDto> result = todos.Select(t => new AllTodoDto()
+        {
+            Id = t.Id,
+            Name = t.Name,
+            Priority = t.Priority.ToString(),
+            Status = t.Status.ToString(),
+            DueDate = t.DueDate.ToString(DateFormat)
+        });
+
+        return (result, group.Name);
     }
 
     public async Task<TodoDetailsDto?> GetTodoDetailsAsync(
