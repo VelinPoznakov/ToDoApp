@@ -1,7 +1,34 @@
 ﻿@{
 }
 
+@* Toggle state for the mobile drawer (pure-CSS, auto-resets on navigation) *@
+<input type="checkbox" id="navDrawerToggle" class="nav-drawer-toggle" hidden />
+
+@* Mobile/tablet top bar — hidden on desktop *@
+<header class="mobile-topbar">
+    <label for="navDrawerToggle" class="mobile-topbar__burger" role="button" tabindex="0" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </label>
+    <div class="mobile-topbar__brand">
+        <img src="~/photos/main-navbar-logo.png" alt="AppIcon"/>
+        <span>To Do App</span>
+    </div>
+</header>
+
+@* Dim backdrop — tapping it closes the drawer *@
+<label for="navDrawerToggle" class="nav-overlay" aria-hidden="true"></label>
+
 <nav class="sidebar-nav">
+    <label for="navDrawerToggle" class="nav-drawer-close" role="button" tabindex="0" aria-label="Close menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+    </label>
     <div class="nav-brand">
         <img src="~/photos/main-navbar-logo.png" alt="AppIcon"/>
         <h2>To Do App</h2>
