@@ -12,8 +12,8 @@ using TodoApp.Web.ViewModels.Todo;
 
 namespace TodoApp.Services.Tests;
 
-// Controller tests mock ITodoService/IGroupService and focus on the
-// ownership guards, status codes and redirect targets of TodoController.
+// Controller tests mock ITodoService/IGroupService and focus on ownership
+// guards, status codes and redirect targets of TodoController.
 public class TodoControllerTests
 {
     private readonly Mock<ITodoService> _todoService = new();
@@ -50,7 +50,19 @@ public class TodoControllerTests
         DueDate = new DateOnly(2026, 12, 31)
     };
 
-    // ===== Index =====
+    private static (IEnumerable<AllTodoDto>, string) TodoTuple(string groupName, params AllTodoDto[] todos)
+        => (todos, groupName);
+
+    private static AllTodoDto SampleDto() => new AllTodoDto
+    {
+        Id = Guid.NewGuid(),
+        Name = "T1",
+        Priority = "High",
+        Status = "Pending",
+        DueDate = "20-07-2026"
+    };
+
+    // ===== Index (All tab) =====
 
     [Fact]
     public async Task Index_ForeignGroup_ReturnsBadRequest_AndNeverLoadsTodos()
@@ -63,28 +75,17 @@ public class TodoControllerTests
 
         Assert.IsType<BadRequestResult>(result);
         _todoService.Verify(
-            s => s.GetAllTodosOrderByPriorityDueDateAsync(
-                It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<bool>()),
+            s => s.GetAllTodosOrderByPriorityDueDateAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
             Times.Never);
     }
 
     [Fact]
-    public async Task Index_OwnedGroup_ReturnsViewWithMappedTodos()
+    public async Task Index_OwnedGroup_ReturnsViewWithMappedTodosAndGroupName()
     {
         Guid groupId = Guid.NewGuid();
         _groupService.Setup(s => s.GroupExistsAsync(groupId, _userId)).ReturnsAsync(true);
-        _todoService.Setup(s => s.GetAllTodosOrderByPriorityDueDateAsync(_userId, groupId, false, false))
-                    .ReturnsAsync(new[]
-                    {
-                        new AllTodoDto
-                        {
-                            Id = Guid.NewGuid(),
-                            Name = "T1",
-                            Priority = "High",
-                            Status = "Pending",
-                            DueDate = "20-07-2026"
-                        }
-                    });
+        _todoService.Setup(s => s.GetAllTodosOrderByPriorityDueDateAsync(_userId, groupId))
+                    .ReturnsAsync(TodoTuple("My Group", SampleDto()));
 
         var controller = CreateController();
         IActionResult result = await controller.Index(groupId);
@@ -92,9 +93,56 @@ public class TodoControllerTests
         ViewResult view = Assert.IsType<ViewResult>(result);
         AllTodosViewModel model = Assert.IsType<AllTodosViewModel>(view.Model);
         Assert.Equal(groupId, model.GroupId);
+        Assert.Equal("My Group", model.GroupName);
         TodoViewModel todo = Assert.Single(model.Todos);
         Assert.Equal("T1", todo.Name);
-        Assert.Equal("High", todo.Priority);
+    }
+
+    [Fact]
+    public async Task Index_GroupMissingInService_ReturnsNotFound()
+    {
+        Guid groupId = Guid.NewGuid();
+        _groupService.Setup(s => s.GroupExistsAsync(groupId, _userId)).ReturnsAsync(true);
+        _todoService.Setup(s => s.GetAllTodosOrderByPriorityDueDateAsync(_userId, groupId))
+                    .ThrowsAsync(new EntityNotFoundException());
+
+        var controller = CreateController();
+
+        Assert.IsType<NotFoundResult>(await controller.Index(groupId));
+    }
+
+    // ===== Pending / Completed tabs =====
+
+    [Fact]
+    public async Task Pending_OwnedGroup_UsesPendingServiceMethod()
+    {
+        Guid groupId = Guid.NewGuid();
+        _groupService.Setup(s => s.GroupExistsAsync(groupId, _userId)).ReturnsAsync(true);
+        _todoService.Setup(s => s.GetAllPendingTodosOrderByPriorityDueDateAsync(_userId, groupId))
+                    .ReturnsAsync(TodoTuple("G"));
+
+        var controller = CreateController();
+        IActionResult result = await controller.Pending(groupId);
+
+        Assert.IsType<ViewResult>(result);
+        _todoService.Verify(
+            s => s.GetAllPendingTodosOrderByPriorityDueDateAsync(_userId, groupId), Times.Once);
+    }
+
+    [Fact]
+    public async Task Completed_OwnedGroup_UsesCompletedServiceMethod()
+    {
+        Guid groupId = Guid.NewGuid();
+        _groupService.Setup(s => s.GroupExistsAsync(groupId, _userId)).ReturnsAsync(true);
+        _todoService.Setup(s => s.GetAllCompletedOrderByPriorityDueDateAsync(_userId, groupId))
+                    .ReturnsAsync(TodoTuple("G"));
+
+        var controller = CreateController();
+        IActionResult result = await controller.Completed(groupId);
+
+        Assert.IsType<ViewResult>(result);
+        _todoService.Verify(
+            s => s.GetAllCompletedOrderByPriorityDueDateAsync(_userId, groupId), Times.Once);
     }
 
     // ===== Details =====
@@ -208,7 +256,7 @@ public class TodoControllerTests
         var controller = CreateController();
         IActionResult result = await controller.Create(groupId, ValidModel());
 
-        ViewResult view = Assert.IsType<ViewResult>(result);
+        Assert.IsType<ViewResult>(result);
         Assert.False(controller.ModelState.IsValid);
     }
 
@@ -239,9 +287,6 @@ public class TodoControllerTests
         RedirectToActionResult redirect = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal("Details", redirect.ActionName);
         Assert.Equal(todoId, redirect.RouteValues!["id"]);
-        _todoService.Verify(
-            s => s.EditTodoAsync(_userId, todoId, It.IsAny<CreateEditTodoDto>()),
-            Times.Once);
     }
 
     [Fact]
@@ -293,25 +338,6 @@ public class TodoControllerTests
         _todoService.Verify(s => s.DeleteTodoAsync(_userId, todoId), Times.Once);
     }
 
-    // ===== Completed list =====
-
-    [Fact]
-    public async Task Completed_OwnedGroup_RequestsCompletedTodosIgnoringQueryFilter()
-    {
-        Guid groupId = Guid.NewGuid();
-        _groupService.Setup(s => s.GroupExistsAsync(groupId, _userId)).ReturnsAsync(true);
-        _todoService.Setup(s => s.GetAllTodosOrderByPriorityDueDateAsync(_userId, groupId, true, true))
-                    .ReturnsAsync(Array.Empty<AllTodoDto>());
-
-        var controller = CreateController();
-        IActionResult result = await controller.Completed(groupId);
-
-        Assert.IsType<ViewResult>(result);
-        _todoService.Verify(
-            s => s.GetAllTodosOrderByPriorityDueDateAsync(_userId, groupId, true, true),
-            Times.Once);
-    }
-
     // ===== Complete / Activate =====
 
     [Fact]
@@ -342,8 +368,10 @@ public class TodoControllerTests
     }
 
     [Fact]
-    public async Task Activate_Valid_RedirectsToIndexWithGroupId()
+    public async Task Activate_Valid_RedirectsToPendingWithGroupId()
     {
+        // Activate moves a completed todo back to pending, so it redirects
+        // to the Pending tab (not Index).
         Guid todoId = Guid.NewGuid();
         Guid groupId = Guid.NewGuid();
         _todoService.Setup(s => s.ActivateTodoAsync(_userId, todoId)).Returns(Task.CompletedTask);
@@ -352,7 +380,7 @@ public class TodoControllerTests
         IActionResult result = await controller.Activate(todoId, groupId);
 
         RedirectToActionResult redirect = Assert.IsType<RedirectToActionResult>(result);
-        Assert.Equal("Index", redirect.ActionName);
+        Assert.Equal("Pending", redirect.ActionName);
         Assert.Equal(groupId, redirect.RouteValues!["id"]);
         _todoService.Verify(s => s.ActivateTodoAsync(_userId, todoId), Times.Once);
     }

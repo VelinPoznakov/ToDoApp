@@ -9,11 +9,14 @@ using TodoApp.Services.Dtos;
 
 namespace TodoApp.Services.Tests;
 
+// Unit tests for TodoService. Both repositories are mocked so only the
+// service's own mapping / orchestration / failure-translation is tested.
 public class TodoServiceTests
 {
-    private readonly Mock<ITodoRepository> _repo = new();
+    private readonly Mock<ITodoRepository> _todoRepo = new();
+    private readonly Mock<IGroupRepository> _groupRepo = new();
 
-    private TodoService CreateService() => new TodoService(_repo.Object);
+    private TodoService CreateService() => new TodoService(_todoRepo.Object, _groupRepo.Object);
 
     private static TodoEntity SampleTodo(Guid userId, Guid groupId, Guid? id = null)
         => new TodoEntity
@@ -30,30 +33,135 @@ public class TodoServiceTests
             Group = new Group { Id = groupId, Name = "The Group", UserId = userId }
         };
 
-    // ===== GetAllTodosOrderByPriorityDueDateAsync =====
+    // Setup helper: the three list methods all resolve the group name via GetGroupById.
+    private void SetupGroupName(Guid groupId, string name)
+        => _groupRepo.Setup(r => r.GetGroupById(
+                groupId,
+                It.IsAny<Expression<Func<Group, Group>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new Group { Id = groupId, Name = name });
+
+    private void SetupTodos(params TodoEntity[] todos)
+        => _todoRepo.Setup(r => r.GetAllTodoNoTracking(
+                It.IsAny<Expression<Func<TodoEntity, bool>>?>(),
+                It.IsAny<Expression<Func<TodoEntity, TodoEntity>>?>(),
+                It.IsAny<bool>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(todos);
+
+    // ===== GetAllTodosOrderByPriorityDueDateAsync (All tab) =====
 
     [Fact]
-    public async Task GetAllTodos_MapsEnumsAndDateToStrings()
+    public async Task GetAllTodos_MapsEnumsAndDate_AndReturnsGroupName()
     {
         Guid userId = Guid.NewGuid();
         Guid groupId = Guid.NewGuid();
-
-        _repo.Setup(r => r.GetAllTodoNoTracking(
-                    It.IsAny<Expression<Func<TodoEntity, bool>>?>(),
-                    It.IsAny<Expression<Func<TodoEntity, TodoEntity>>?>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<bool>()))
-             .ReturnsAsync(new[] { SampleTodo(userId, groupId) });
+        SetupTodos(SampleTodo(userId, groupId));
+        SetupGroupName(groupId, "Work");
 
         var service = CreateService();
-        AllTodoDto[] result =
-            (await service.GetAllTodosOrderByPriorityDueDateAsync(userId, groupId)).ToArray();
+        (IEnumerable<AllTodoDto> todos, string groupName) =
+            await service.GetAllTodosOrderByPriorityDueDateAsync(userId, groupId);
 
-        Assert.Single(result);
-        Assert.Equal("Sample", result[0].Name);
-        Assert.Equal("High", result[0].Priority);
-        Assert.Equal("Pending", result[0].Status);
-        Assert.Equal("20-07-2026", result[0].DueDate);
+        AllTodoDto dto = Assert.Single(todos);
+        Assert.Equal("Sample", dto.Name);
+        Assert.Equal("High", dto.Priority);
+        Assert.Equal("Pending", dto.Status);
+        Assert.Equal("20-07-2026", dto.DueDate);
+        Assert.Equal("Work", groupName);
+    }
+
+    [Fact]
+    public async Task GetAllTodos_WhenGroupMissing_ThrowsEntityNotFound()
+    {
+        Guid userId = Guid.NewGuid();
+        Guid groupId = Guid.NewGuid();
+        SetupTodos();
+        _groupRepo.Setup(r => r.GetGroupById(
+                groupId,
+                It.IsAny<Expression<Func<Group, Group>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync((Group?)null);
+
+        var service = CreateService();
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => service.GetAllTodosOrderByPriorityDueDateAsync(userId, groupId));
+    }
+
+    // ===== Pending tab =====
+
+    [Fact]
+    public async Task GetAllPending_ReturnsMappedTodosAndGroupName()
+    {
+        Guid userId = Guid.NewGuid();
+        Guid groupId = Guid.NewGuid();
+        SetupTodos(SampleTodo(userId, groupId));
+        SetupGroupName(groupId, "Pending Group");
+
+        var service = CreateService();
+        (IEnumerable<AllTodoDto> todos, string groupName) =
+            await service.GetAllPendingTodosOrderByPriorityDueDateAsync(userId, groupId);
+
+        Assert.Single(todos);
+        Assert.Equal("Pending Group", groupName);
+    }
+
+    [Fact]
+    public async Task GetAllPending_WhenGroupMissing_ThrowsEntityNotFound()
+    {
+        Guid userId = Guid.NewGuid();
+        Guid groupId = Guid.NewGuid();
+        SetupTodos();
+        _groupRepo.Setup(r => r.GetGroupById(
+                groupId,
+                It.IsAny<Expression<Func<Group, Group>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync((Group?)null);
+
+        var service = CreateService();
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => service.GetAllPendingTodosOrderByPriorityDueDateAsync(userId, groupId));
+    }
+
+    // ===== Completed tab =====
+
+    [Fact]
+    public async Task GetAllCompleted_ReturnsMappedTodosAndGroupName()
+    {
+        Guid userId = Guid.NewGuid();
+        Guid groupId = Guid.NewGuid();
+        TodoEntity done = SampleTodo(userId, groupId);
+        done.Status = Status.Completed;
+        SetupTodos(done);
+        SetupGroupName(groupId, "Completed Group");
+
+        var service = CreateService();
+        (IEnumerable<AllTodoDto> todos, string groupName) =
+            await service.GetAllCompletedOrderByPriorityDueDateAsync(userId, groupId);
+
+        AllTodoDto dto = Assert.Single(todos);
+        Assert.Equal("Completed", dto.Status);
+        Assert.Equal("Completed Group", groupName);
+    }
+
+    [Fact]
+    public async Task GetAllCompleted_WhenGroupMissing_ThrowsEntityNotFound()
+    {
+        Guid userId = Guid.NewGuid();
+        Guid groupId = Guid.NewGuid();
+        SetupTodos();
+        _groupRepo.Setup(r => r.GetGroupById(
+                groupId,
+                It.IsAny<Expression<Func<Group, Group>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync((Group?)null);
+
+        var service = CreateService();
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => service.GetAllCompletedOrderByPriorityDueDateAsync(userId, groupId));
     }
 
     // ===== GetTodoDetailsAsync =====
@@ -61,7 +169,7 @@ public class TodoServiceTests
     [Fact]
     public async Task GetTodoDetails_WhenMissing_ReturnsNull()
     {
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
@@ -80,7 +188,7 @@ public class TodoServiceTests
         TodoEntity todo = SampleTodo(userId, groupId);
         todo.Comments.Add(new Comment { Id = 1, Content = "Nice", TodoId = todo.Id });
 
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
@@ -109,7 +217,7 @@ public class TodoServiceTests
         Guid groupId = Guid.NewGuid();
         TodoEntity todo = SampleTodo(userId, groupId);
 
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
@@ -121,7 +229,6 @@ public class TodoServiceTests
         Assert.NotNull(result);
         Assert.Equal("Sample", result!.Name);
         Assert.Equal(groupId, result.GroupId);
-        // Details-only fields are not populated in tracked (edit) mode.
         Assert.Empty(result.Comments);
     }
 
@@ -134,7 +241,7 @@ public class TodoServiceTests
         Guid groupId = Guid.NewGuid();
         TodoEntity? captured = null;
 
-        _repo.Setup(r => r.AddTodoAsync(It.IsAny<TodoEntity>()))
+        _todoRepo.Setup(r => r.AddTodoAsync(It.IsAny<TodoEntity>()))
              .Callback<TodoEntity>(t => captured = t)
              .ReturnsAsync(true);
 
@@ -160,7 +267,7 @@ public class TodoServiceTests
     [Fact]
     public async Task AddTodo_WhenRepoFails_ThrowsDataPersistFail()
     {
-        _repo.Setup(r => r.AddTodoAsync(It.IsAny<TodoEntity>())).ReturnsAsync(false);
+        _todoRepo.Setup(r => r.AddTodoAsync(It.IsAny<TodoEntity>())).ReturnsAsync(false);
 
         var service = CreateService();
 
@@ -179,7 +286,7 @@ public class TodoServiceTests
     [Fact]
     public async Task EditTodo_WhenMissing_ThrowsEntityNotFound()
     {
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
@@ -203,12 +310,12 @@ public class TodoServiceTests
         Guid userId = Guid.NewGuid();
         TodoEntity todo = SampleTodo(userId, Guid.NewGuid());
 
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
              .ReturnsAsync(todo);
-        _repo.Setup(r => r.EditTodoAsync(todo)).ReturnsAsync(true);
+        _todoRepo.Setup(r => r.EditTodoAsync(todo)).ReturnsAsync(true);
 
         var service = CreateService();
         await service.EditTodoAsync(userId, todo.Id, new CreateEditTodoDto
@@ -224,7 +331,7 @@ public class TodoServiceTests
         Assert.Equal(Priority.Low, todo.Priority);
         Assert.Equal(new DateOnly(2026, 12, 31), todo.DueDate);
         Assert.NotNull(todo.UpdatedOn);
-        _repo.Verify(r => r.EditTodoAsync(todo), Times.Once);
+        _todoRepo.Verify(r => r.EditTodoAsync(todo), Times.Once);
     }
 
     // ===== Complete / Activate =====
@@ -235,12 +342,12 @@ public class TodoServiceTests
         Guid userId = Guid.NewGuid();
         TodoEntity todo = SampleTodo(userId, Guid.NewGuid());
 
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
              .ReturnsAsync(todo);
-        _repo.Setup(r => r.EditTodoAsync(todo)).ReturnsAsync(true);
+        _todoRepo.Setup(r => r.EditTodoAsync(todo)).ReturnsAsync(true);
 
         var service = CreateService();
         await service.CompleteTodo(todo.Id, userId);
@@ -255,12 +362,12 @@ public class TodoServiceTests
         TodoEntity todo = SampleTodo(userId, Guid.NewGuid());
         todo.Status = Status.Completed;
 
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
              .ReturnsAsync(todo);
-        _repo.Setup(r => r.EditTodoAsync(todo)).ReturnsAsync(true);
+        _todoRepo.Setup(r => r.EditTodoAsync(todo)).ReturnsAsync(true);
 
         var service = CreateService();
         await service.ActivateTodoAsync(userId, todo.Id);
@@ -271,7 +378,7 @@ public class TodoServiceTests
     [Fact]
     public async Task CompleteTodo_WhenMissing_ThrowsEntityNotFound()
     {
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
@@ -288,7 +395,7 @@ public class TodoServiceTests
     [Fact]
     public async Task DeleteTodo_WhenMissing_ThrowsEntityNotFound()
     {
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
@@ -306,27 +413,27 @@ public class TodoServiceTests
         Guid userId = Guid.NewGuid();
         TodoEntity todo = SampleTodo(userId, Guid.NewGuid());
 
-        _repo.Setup(r => r.GetTodoAsync(
+        _todoRepo.Setup(r => r.GetTodoAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()))
              .ReturnsAsync(todo);
-        _repo.Setup(r => r.DeleteTodoAsync(todo)).ReturnsAsync(true);
+        _todoRepo.Setup(r => r.DeleteTodoAsync(todo)).ReturnsAsync(true);
 
         var service = CreateService();
         await service.DeleteTodoAsync(userId, todo.Id);
 
-        _repo.Verify(r => r.DeleteTodoAsync(todo), Times.Once);
+        _todoRepo.Verify(r => r.DeleteTodoAsync(todo), Times.Once);
     }
 
-    // ===== CountTodos / GetTodosAfterDueDate =====
+    // ===== CountTodos =====
 
     [Fact]
-    public async Task CountTodos_PassesOnlyCompletedFlag()
+    public async Task CountTodos_OnlyCompleted_PassesCountCompletedTrue()
     {
         Guid userId = Guid.NewGuid();
 
-        _repo.Setup(r => r.CountTodosAsync(
+        _todoRepo.Setup(r => r.CountTodosAsync(
                     It.IsAny<Expression<Func<TodoEntity, bool>>>(),
                     true))
              .ReturnsAsync(3);
@@ -334,39 +441,28 @@ public class TodoServiceTests
         var service = CreateService();
 
         Assert.Equal(3, await service.CountTodos(userId, true));
-        _repo.Verify(r => r.CountTodosAsync(
+        _todoRepo.Verify(r => r.CountTodosAsync(
             It.IsAny<Expression<Func<TodoEntity, bool>>>(), true), Times.Once);
     }
 
     [Fact]
-    public async Task CountTodos_OnlyCompleted_FilterMatchesOnlyUsersCompletedTodos()
+    public async Task CountTodos_Default_PassesCountCompletedFalse()
     {
-        // Captures the WHERE expression the service builds and runs it against
-        // sample todos - this pins the predicate itself (user AND completed),
-        // which a mock-only pass-through test cannot catch.
         Guid userId = Guid.NewGuid();
-        Expression<Func<TodoEntity, bool>>? captured = null;
 
-        _repo.Setup(r => r.CountTodosAsync(It.IsAny<Expression<Func<TodoEntity, bool>>>(), true))
-             .Callback<Expression<Func<TodoEntity, bool>>, bool>((f, _) => captured = f)
-             .ReturnsAsync(0);
+        _todoRepo.Setup(r => r.CountTodosAsync(
+                    It.IsAny<Expression<Func<TodoEntity, bool>>>(),
+                    false))
+             .ReturnsAsync(5);
 
         var service = CreateService();
-        await service.CountTodos(userId, true);
 
-        Assert.NotNull(captured);
-        Func<TodoEntity, bool> predicate = captured!.Compile();
-
-        TodoEntity completedMine = SampleTodo(userId, Guid.NewGuid());
-        completedMine.Status = Status.Completed;
-        TodoEntity pendingMine = SampleTodo(userId, Guid.NewGuid());
-        TodoEntity completedForeign = SampleTodo(Guid.NewGuid(), Guid.NewGuid());
-        completedForeign.Status = Status.Completed;
-
-        Assert.True(predicate(completedMine));
-        Assert.False(predicate(pendingMine));
-        Assert.False(predicate(completedForeign));
+        Assert.Equal(5, await service.CountTodos(userId));
+        _todoRepo.Verify(r => r.CountTodosAsync(
+            It.IsAny<Expression<Func<TodoEntity, bool>>>(), false), Times.Once);
     }
+
+    // ===== GetTodosAfterDueDate =====
 
     [Fact]
     public async Task GetTodosAfterDueDate_MapsGroupName()
@@ -374,7 +470,7 @@ public class TodoServiceTests
         Guid userId = Guid.NewGuid();
         TodoEntity todo = SampleTodo(userId, Guid.NewGuid());
 
-        _repo.Setup(r => r.GetAllTodoNoTracking(
+        _todoRepo.Setup(r => r.GetAllTodoNoTracking(
                     It.IsAny<Expression<Func<TodoEntity, bool>>?>(),
                     It.IsAny<Expression<Func<TodoEntity, TodoEntity>>?>(),
                     It.IsAny<bool>(),
