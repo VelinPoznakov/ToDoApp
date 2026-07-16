@@ -337,6 +337,50 @@ namespace TodoApp.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("TodoApp.Models.Data.SupportMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasComment("Support message primary key");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Support message user fk");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Support message created on date");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
+                        .HasComment("Support message description");
+
+                    b.Property<DateTime>("HandledOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Support message handled on date");
+
+                    b.Property<bool>("IsHandled")
+                        .HasColumnType("bit")
+                        .HasComment("Support message completed on date");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Support message title");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("SupportMessages");
+                });
+
             modelBuilder.Entity("TodoApp.Models.Data.TodoEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -528,6 +572,17 @@ namespace TodoApp.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TodoApp.Models.Data.SupportMessage", b =>
+                {
+                    b.HasOne("TodoApp.Models.Data.ApplicationUser", "ApplicationUser")
+                        .WithMany("SupportMessages")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("TodoApp.Models.Data.TodoEntity", b =>
                 {
                     b.HasOne("TodoApp.Models.Data.Group", "Group")
@@ -549,6 +604,8 @@ namespace TodoApp.Data.Migrations
 
             modelBuilder.Entity("TodoApp.Models.Data.ApplicationUser", b =>
                 {
+                    b.Navigation("SupportMessages");
+
                     b.Navigation("Todos");
                 });
 
