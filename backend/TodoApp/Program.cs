@@ -42,7 +42,7 @@ namespace TodoApp
             builder.Services.AddTransient<IIdentitySeeder, IdentitySeeder>();
 
             builder.Services
-                .AddDefaultIdentity<ApplicationUser>(options =>
+                .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
                 {
                     PasswordConfiguration(options.Password, builder.Configuration);
                     SignInConfiguration(options.SignIn, builder.Configuration);
@@ -114,9 +114,6 @@ namespace TodoApp
             app.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
-
-            app.MapRazorPages()
                 .WithStaticAssets();
 
             app.Run();

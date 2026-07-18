@@ -18,6 +18,8 @@ namespace TodoApp.Data
         public virtual DbSet<Group> Groups { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<SupportMessage> SupportMessages { get; set; } = null!;
+        public virtual DbSet<RegularUser> RegularUsers { get; set; } = null!;
+        public virtual DbSet<AdminUser> AdminUsers { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -25,7 +27,12 @@ namespace TodoApp.Data
             builder.ApplyConfiguration(new TodoEntityConfiguration());
             builder.ApplyConfiguration(new SupportMessageConfiguration());
 
+            builder.Entity<ApplicationUser>().UseTptMappingStrategy();
+            builder.Entity<AdminUser>().ToTable("AdminUsers");
+            builder.Entity<RegularUser>().ToTable("RegularUsers");
+            
             base.OnModelCreating(builder);
+            
         }
     }
 }

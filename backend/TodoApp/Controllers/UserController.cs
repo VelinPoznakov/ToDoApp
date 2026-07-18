@@ -43,7 +43,7 @@ namespace TodoApp.Controllers
                 return View(model);
             }
 
-            ApplicationUser user = new ApplicationUser
+            ApplicationUser user = new RegularUser
             {
                 UserName = model.Email,
                 FirstName = model.FirstName,

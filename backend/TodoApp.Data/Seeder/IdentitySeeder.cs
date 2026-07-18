@@ -56,7 +56,7 @@ namespace TodoApp.Data.Seeder
             ApplicationUser? adminUser = await userManager.FindByEmailAsync(email);
             if (adminUser == null)
             {
-                adminUser = new ApplicationUser
+                adminUser = new AdminUser()
                 {
                     Id = Guid.Parse("07420943-635f-4cd8-8850-e0ce781094f2"),
                     UserName = "Velin666",
