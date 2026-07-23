@@ -35,9 +35,11 @@ namespace TodoApp
 
             builder.Services.AddScoped<ITodoRepository, TodoRepository>();
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+            builder.Services.AddScoped<ISupportRepository, SupportRepository>();
 
             builder.Services.AddScoped<ITodoService, TodoService>();
             builder.Services.AddScoped<IGroupService, GroupService>();
+            builder.Services.AddScoped<ISupportService, SupportService>();
 
             builder.Services.AddTransient<IIdentitySeeder, IdentitySeeder>();
 

@@ -7,7 +7,7 @@ namespace TodoApp.Data.Repositories;
 
 public class SupportRepository: BaseRepository, ISupportRepository
 {
-    protected SupportRepository(TodoDbContext dbContext) : base(dbContext)
+    public SupportRepository(TodoDbContext dbContext) : base(dbContext)
     {
     }
 
@@ -38,7 +38,8 @@ public class SupportRepository: BaseRepository, ISupportRepository
 
         messages = messages
             .OrderBy(s => s.CreatedOn)
-            .ThenBy(s => s.Title);
+            .ThenBy(s => s.Title)
+            .ThenBy(s => s.IsHandled);
 
         if (projection != null)
         {
@@ -46,5 +47,61 @@ public class SupportRepository: BaseRepository, ISupportRepository
         }
 
         return await messages.ToArrayAsync();
+    }
+
+    public async Task<bool> CreateSupportMessage(SupportMessage message)
+    {
+        await DbContext.SupportMessages.AddAsync(message);
+
+        int result = await SaveChangesAsync();
+
+        return result == 1;
+    }
+
+    public async Task<bool> EditSupportMessage(SupportMessage message)
+    {
+        DbContext.SupportMessages.Update(message);
+
+        int result = await SaveChangesAsync();
+
+        return result == 1;
+    }
+
+    public async Task<SupportMessage?> GetSupportMessage(
+        int id,
+        Expression<Func<SupportMessage, SupportMessage>>? projection,
+        bool tracked = true,
+        bool ignoreQueryFilter = false)
+    {
+        IQueryable<SupportMessage> message = DbContext
+            .SupportMessages
+            .Include(u=> u.ApplicationUser)
+            .AsQueryable();
+
+        if (!tracked)
+        {
+            message = message.AsNoTracking();
+        }
+
+        if (ignoreQueryFilter)
+        {
+            message = message.IgnoreQueryFilters();
+        }
+
+        if (projection != null)
+        {
+            message = message.Select(projection);
+        }
+
+        return await message.FirstOrDefaultAsync(m => m.Id == id);
+    }
+
+    public async Task<bool> DeleteSupportMessage(SupportMessage message)
+    {
+        DbContext.SupportMessages.Remove(message);
+
+        int result = await SaveChangesAsync();
+
+        return result == 1;
     }
 }

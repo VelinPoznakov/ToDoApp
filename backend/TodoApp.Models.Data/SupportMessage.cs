@@ -27,7 +27,7 @@ public class SupportMessage
     public DateTime CreatedOn { get; set; }
     
     [Comment("Support message handled on date")]
-    public DateTime HandledOn { get; set; }
+    public DateTime? HandledOn { get; set; }
 
     [Comment("Support message completed on date")]
     [Required]
@@ -38,4 +38,9 @@ public class SupportMessage
     [ForeignKey(nameof(ApplicationUser))]
     public Guid ApplicationUserId { get; set; }
     public virtual ApplicationUser ApplicationUser { get; set; } = null!;
+    
+    [Comment("Support message handled by admin user")]
+    [ForeignKey(nameof(HandledByAdminUser))]
+    public Guid? HandledByAdminUserId { get; set; }
+    public virtual AdminUser? HandledByAdminUser { get; set; }
 }

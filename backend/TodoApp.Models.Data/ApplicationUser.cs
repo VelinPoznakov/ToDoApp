@@ -5,7 +5,7 @@ using static TodoApp.GCommon.ModelValidations.ApplicationUser;
 
 namespace TodoApp.Models.Data
 {
-    public abstract class ApplicationUser: IdentityUser<Guid>
+    public class ApplicationUser: IdentityUser<Guid>
     {
         [PersonalData]
         [MaxLength(FirstNameMaxLength)]
