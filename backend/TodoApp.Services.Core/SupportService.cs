@@ -181,7 +181,7 @@ public class SupportService: ISupportService
         return result;
     }
 
-    public async Task HandleSupportMessaged(int supportMessageId, Guid adminUserId)
+    public async Task HandleSupportMessages(int supportMessageId, Guid adminUserId)
     {
         SupportMessage? supportMessage = await _supportRepository
             .GetSupportMessage(
@@ -243,7 +243,7 @@ public class SupportService: ISupportService
         }
     }
 
-    public async Task UnhandleSupportMessage(int id)
+    public async Task UnhandledSupportMessage(int id)
     {
         SupportMessage? supportMessage = await _supportRepository
             .GetSupportMessage(

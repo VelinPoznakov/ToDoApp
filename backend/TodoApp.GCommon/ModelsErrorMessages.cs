@@ -20,5 +20,9 @@
         public const string InvalidPriorityErrorMessage = "Please select a valid priority.";
 
         public const string InvalidGroupName = "Group name has to be between {2} and {1} characters long";
+
+        public const string SupportMessageTitleErrorMessage =
+            "Support title must be between {2} and {1} characters long.";
+        public const string SupportMessageDescriptionErrorMessage = "Description must be between {2} and {1} characters long.";
     }
 }

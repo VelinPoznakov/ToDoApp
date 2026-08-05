@@ -9,10 +9,10 @@ public interface ISupportService
     Task<IEnumerable<AllSupportMessagesDto>> GetAllHandledSupportMessages();
     Task<SupportMessageDetailsDto> GetSupportMessage(int id);
     Task<IEnumerable<AllSupportMessagesDto>> GetAllSupportMessagesForUser(Guid userId);
-    Task HandleSupportMessaged(int supportMessageId, Guid adminUserId);
+    Task HandleSupportMessages(int supportMessageId, Guid adminUserId);
     Task DeleteSupportMessage(int supportMessageId);
     Task CreateSupportMessage(Guid userId, CreateSupportMessageDto dto);
-    Task UnhandleSupportMessage(int id);
+    Task UnhandledSupportMessage(int id);
     Task<IEnumerable<AllSupportMessagesDto>> GetAllUnhandledSupportMessagesForUser(Guid userId);
     Task<IEnumerable<AllSupportMessagesDto>> GetAllHandledSupportMessagesForUser(Guid userId);
 }
