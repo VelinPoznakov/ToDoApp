@@ -320,7 +320,7 @@ public class SupportServiceTests
         _repo.Setup(r => r.EditSupportMessage(message)).ReturnsAsync(true);
 
         var service = CreateService();
-        await service.HandleSupportMessaged(message.Id, adminId);
+        await service.HandleSupportMessages(message.Id, adminId);
 
         Assert.True(message.IsHandled);
         Assert.Equal(adminId, message.HandledByAdminUserId);
@@ -341,7 +341,7 @@ public class SupportServiceTests
         var service = CreateService();
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
-            () => service.HandleSupportMessaged(1, Guid.NewGuid()));
+            () => service.HandleSupportMessages(1, Guid.NewGuid()));
     }
 
     [Fact]
@@ -356,7 +356,7 @@ public class SupportServiceTests
         var service = CreateService();
 
         await Assert.ThrowsAsync<DataPersistFail>(
-            () => service.HandleSupportMessaged(message.Id, Guid.NewGuid()));
+            () => service.HandleSupportMessages(message.Id, Guid.NewGuid()));
     }
 
     // ===== UnhandledSupportMessage (re-open) =====
