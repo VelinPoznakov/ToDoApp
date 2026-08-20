@@ -5,15 +5,18 @@ namespace TodoApp.Services.Core.Contracts;
 
 public interface ITodoService
 {
-    Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllTodosOrderByPriorityDueDateAsync(
+    Task<PagedTodosDto> GetAllTodosOrderByPriorityDueDateAsync(
         Guid userId,
-        Guid groupId);
-    Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllCompletedOrderByPriorityDueDateAsync(
+        Guid groupId,
+        int page);
+    Task<PagedTodosDto> GetAllCompletedOrderByPriorityDueDateAsync(
         Guid userId,
-        Guid groupId);
-    Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllPendingTodosOrderByPriorityDueDateAsync(
+        Guid groupId,
+        int page);
+    Task<PagedTodosDto> GetAllPendingTodosOrderByPriorityDueDateAsync(
         Guid userId,
-        Guid groupId);
+        Guid groupId,
+        int page);
     Task<TodoDetailsDto?> GetTodoDetailsAsync(Guid userId, Guid todoId, bool track = false);
     Task AddTodoAsync(CreateEditTodoDto createTodoDto, Guid userId);
     Task EditTodoAsync(Guid userId, Guid todoId, CreateEditTodoDto editTodoDto);

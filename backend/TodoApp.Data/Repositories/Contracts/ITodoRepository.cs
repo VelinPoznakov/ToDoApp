@@ -6,6 +6,7 @@ namespace TodoApp.Data.Repositories.Contracts;
 public interface ITodoRepository
 {
     Task<IEnumerable<TodoEntity>> GetAllTodoNoTracking(
+        int page,
         Expression<Func<TodoEntity, bool>>? filterQuery = null,
         Expression<Func<TodoEntity, TodoEntity>>? projectionQuery = null,
         bool ignoreQueryFilter = false,

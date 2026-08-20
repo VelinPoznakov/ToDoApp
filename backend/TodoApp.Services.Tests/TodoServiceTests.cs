@@ -43,6 +43,7 @@ public class TodoServiceTests
 
     private void SetupTodos(params TodoEntity[] todos)
         => _todoRepo.Setup(r => r.GetAllTodoNoTracking(
+                It.IsAny<int>(),
                 It.IsAny<Expression<Func<TodoEntity, bool>>?>(),
                 It.IsAny<Expression<Func<TodoEntity, TodoEntity>>?>(),
                 It.IsAny<bool>(),
@@ -60,15 +61,16 @@ public class TodoServiceTests
         SetupGroupName(groupId, "Work");
 
         var service = CreateService();
-        (IEnumerable<AllTodoDto> todos, string groupName) =
-            await service.GetAllTodosOrderByPriorityDueDateAsync(userId, groupId);
+        PagedTodosDto page = await service
+            .GetAllTodosOrderByPriorityDueDateAsync(userId, groupId, 0);
 
-        AllTodoDto dto = Assert.Single(todos);
+        AllTodoDto dto = Assert.Single(page.Todos);
         Assert.Equal("Sample", dto.Name);
         Assert.Equal("High", dto.Priority);
         Assert.Equal("Pending", dto.Status);
         Assert.Equal("20-07-2026", dto.DueDate);
-        Assert.Equal("Work", groupName);
+        Assert.Equal("Work", page.GroupName);
+        Assert.Equal(0, page.PageNumber);
     }
 
     [Fact]
@@ -86,7 +88,7 @@ public class TodoServiceTests
         var service = CreateService();
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
-            () => service.GetAllTodosOrderByPriorityDueDateAsync(userId, groupId));
+            () => service.GetAllTodosOrderByPriorityDueDateAsync(userId, groupId, 0));
     }
 
     // ===== Pending tab =====
@@ -100,11 +102,11 @@ public class TodoServiceTests
         SetupGroupName(groupId, "Pending Group");
 
         var service = CreateService();
-        (IEnumerable<AllTodoDto> todos, string groupName) =
-            await service.GetAllPendingTodosOrderByPriorityDueDateAsync(userId, groupId);
+        PagedTodosDto page = await service
+            .GetAllPendingTodosOrderByPriorityDueDateAsync(userId, groupId, 0);
 
-        Assert.Single(todos);
-        Assert.Equal("Pending Group", groupName);
+        Assert.Single(page.Todos);
+        Assert.Equal("Pending Group", page.GroupName);
     }
 
     [Fact]
@@ -122,7 +124,7 @@ public class TodoServiceTests
         var service = CreateService();
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
-            () => service.GetAllPendingTodosOrderByPriorityDueDateAsync(userId, groupId));
+            () => service.GetAllPendingTodosOrderByPriorityDueDateAsync(userId, groupId, 0));
     }
 
     // ===== Completed tab =====
@@ -138,12 +140,12 @@ public class TodoServiceTests
         SetupGroupName(groupId, "Completed Group");
 
         var service = CreateService();
-        (IEnumerable<AllTodoDto> todos, string groupName) =
-            await service.GetAllCompletedOrderByPriorityDueDateAsync(userId, groupId);
+        PagedTodosDto page = await service
+            .GetAllCompletedOrderByPriorityDueDateAsync(userId, groupId, 0);
 
-        AllTodoDto dto = Assert.Single(todos);
+        AllTodoDto dto = Assert.Single(page.Todos);
         Assert.Equal("Completed", dto.Status);
-        Assert.Equal("Completed Group", groupName);
+        Assert.Equal("Completed Group", page.GroupName);
     }
 
     [Fact]
@@ -161,7 +163,7 @@ public class TodoServiceTests
         var service = CreateService();
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
-            () => service.GetAllCompletedOrderByPriorityDueDateAsync(userId, groupId));
+            () => service.GetAllCompletedOrderByPriorityDueDateAsync(userId, groupId, 0));
     }
 
     // ===== GetTodoDetailsAsync =====
@@ -471,6 +473,7 @@ public class TodoServiceTests
         TodoEntity todo = SampleTodo(userId, Guid.NewGuid());
 
         _todoRepo.Setup(r => r.GetAllTodoNoTracking(
+                    It.IsAny<int>(),
                     It.IsAny<Expression<Func<TodoEntity, bool>>?>(),
                     It.IsAny<Expression<Func<TodoEntity, TodoEntity>>?>(),
                     It.IsAny<bool>(),

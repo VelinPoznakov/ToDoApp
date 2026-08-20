@@ -30,7 +30,7 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index([FromRoute]Guid id)
+        public async Task<IActionResult> Index([FromRoute]Guid id, [FromQuery]int page = 0)
         {
             if (id.ToString().IsNullOrEmpty())
             {
@@ -45,24 +45,27 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
             {
                 return BadRequest();
             }
-
+            
             try
             {
-                (IEnumerable<AllTodoDto> allTodos, string groupName) = await _todoService
-                    .GetAllTodosOrderByPriorityDueDateAsync(userId, id);
+                PagedTodosDto allTodos = await _todoService
+                    .GetAllTodosOrderByPriorityDueDateAsync(userId, id, page);
                 
-                AllTodosViewModel result = new AllTodosViewModel()
+                IEnumerable<TodoViewModel> todos = allTodos.Todos.Select(t => new TodoViewModel()
                 {
+                    Id = t.Id,
+                    Name = t.Name,
+                    DueDate = t.DueDate,
+                    Priority = t.Priority,
+                    Status = t.Status
+                });
+
+                PagedTodosViewModel result = new PagedTodosViewModel()
+                {
+                    Todos = todos,
                     GroupId = id,
-                    Todos = allTodos.Select(t => new TodoViewModel()
-                    {
-                        Id = t.Id,
-                        Name = t.Name,
-                        DueDate = t.DueDate,
-                        Priority = t.Priority,
-                        Status = t.Status
-                    }),
-                    GroupName = groupName
+                    GroupName = allTodos.GroupName,
+                    PageNumber = page + 1
                 };
 
                 return View(result);
@@ -112,7 +115,7 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Pending([FromRoute] Guid id)
+        public async Task<IActionResult> Pending([FromRoute] Guid id, [FromQuery]int page = 0)
         {
             if (id.ToString().IsNullOrEmpty())
             {
@@ -130,21 +133,24 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
 
             try
             {
-                (IEnumerable<AllTodoDto> allTodos, string groupName) = await _todoService
-                    .GetAllPendingTodosOrderByPriorityDueDateAsync(userId, id);
+                PagedTodosDto allTodos = await _todoService
+                    .GetAllPendingTodosOrderByPriorityDueDateAsync(userId, id, page);
                 
-                AllTodosViewModel result = new AllTodosViewModel()
+                IEnumerable<TodoViewModel> todos = allTodos.Todos.Select(t => new TodoViewModel()
                 {
+                    Id = t.Id,
+                    Name = t.Name,
+                    DueDate = t.DueDate,
+                    Priority = t.Priority,
+                    Status = t.Status
+                });
+
+                PagedTodosViewModel result = new PagedTodosViewModel()
+                {
+                    Todos = todos,
                     GroupId = id,
-                    Todos = allTodos.Select(t => new TodoViewModel()
-                    {
-                        Id = t.Id,
-                        Name = t.Name,
-                        DueDate = t.DueDate,
-                        Priority = t.Priority,
-                        Status = t.Status
-                    }),
-                    GroupName = groupName
+                    GroupName = allTodos.GroupName,
+                    PageNumber = page + 1
                 };
 
                 return View(result);
@@ -349,7 +355,7 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Completed([FromRoute] Guid id)
+        public async Task<IActionResult> Completed([FromRoute] Guid id, [FromQuery]int page = 0)
         {
             if (id.ToString().IsNullOrEmpty())
             {
@@ -367,21 +373,24 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
 
             try
             {
-                (IEnumerable<AllTodoDto> allTodos, string groupName) = await _todoService
-                    .GetAllCompletedOrderByPriorityDueDateAsync(userId, id);
+                PagedTodosDto allTodos = await _todoService
+                    .GetAllCompletedOrderByPriorityDueDateAsync(userId, id, page);
                 
-                AllTodosViewModel result = new AllTodosViewModel()
+                IEnumerable<TodoViewModel> todos = allTodos.Todos.Select(t => new TodoViewModel()
                 {
+                    Id = t.Id,
+                    Name = t.Name,
+                    DueDate = t.DueDate,
+                    Priority = t.Priority,
+                    Status = t.Status
+                });
+
+                PagedTodosViewModel result = new PagedTodosViewModel()
+                {
+                    Todos = todos,
                     GroupId = id,
-                    Todos = allTodos.Select(t => new TodoViewModel()
-                    {
-                        Id = t.Id,
-                        Name = t.Name,
-                        DueDate = t.DueDate,
-                        Priority = t.Priority,
-                        Status = t.Status
-                    }),
-                    GroupName = groupName
+                    GroupName = allTodos.GroupName,
+                    PageNumber = page + 1
                 };
 
                 return View(result);

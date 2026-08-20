@@ -50,8 +50,13 @@ public class TodoControllerTests
         DueDate = new DateOnly(2026, 12, 31)
     };
 
-    private static (IEnumerable<AllTodoDto>, string) TodoTuple(string groupName, params AllTodoDto[] todos)
-        => (todos, groupName);
+    private static PagedTodosDto TodoPage(string groupName, params AllTodoDto[] todos)
+        => new PagedTodosDto
+        {
+            Todos = todos,
+            GroupName = groupName,
+            PageNumber = 0
+        };
 
     private static AllTodoDto SampleDto() => new AllTodoDto
     {
@@ -75,7 +80,7 @@ public class TodoControllerTests
 
         Assert.IsType<BadRequestResult>(result);
         _todoService.Verify(
-            s => s.GetAllTodosOrderByPriorityDueDateAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
+            s => s.GetAllTodosOrderByPriorityDueDateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<int>()),
             Times.Never);
     }
 
@@ -84,14 +89,14 @@ public class TodoControllerTests
     {
         Guid groupId = Guid.NewGuid();
         _groupService.Setup(s => s.GroupExistsAsync(groupId, _userId)).ReturnsAsync(true);
-        _todoService.Setup(s => s.GetAllTodosOrderByPriorityDueDateAsync(_userId, groupId))
-                    .ReturnsAsync(TodoTuple("My Group", SampleDto()));
+        _todoService.Setup(s => s.GetAllTodosOrderByPriorityDueDateAsync(_userId, groupId, 0))
+                    .ReturnsAsync(TodoPage("My Group", SampleDto()));
 
         var controller = CreateController();
         IActionResult result = await controller.Index(groupId);
 
         ViewResult view = Assert.IsType<ViewResult>(result);
-        AllTodosViewModel model = Assert.IsType<AllTodosViewModel>(view.Model);
+        PagedTodosViewModel model = Assert.IsType<PagedTodosViewModel>(view.Model);
         Assert.Equal(groupId, model.GroupId);
         Assert.Equal("My Group", model.GroupName);
         TodoViewModel todo = Assert.Single(model.Todos);
@@ -103,7 +108,7 @@ public class TodoControllerTests
     {
         Guid groupId = Guid.NewGuid();
         _groupService.Setup(s => s.GroupExistsAsync(groupId, _userId)).ReturnsAsync(true);
-        _todoService.Setup(s => s.GetAllTodosOrderByPriorityDueDateAsync(_userId, groupId))
+        _todoService.Setup(s => s.GetAllTodosOrderByPriorityDueDateAsync(_userId, groupId, 0))
                     .ThrowsAsync(new EntityNotFoundException());
 
         var controller = CreateController();
@@ -118,15 +123,15 @@ public class TodoControllerTests
     {
         Guid groupId = Guid.NewGuid();
         _groupService.Setup(s => s.GroupExistsAsync(groupId, _userId)).ReturnsAsync(true);
-        _todoService.Setup(s => s.GetAllPendingTodosOrderByPriorityDueDateAsync(_userId, groupId))
-                    .ReturnsAsync(TodoTuple("G"));
+        _todoService.Setup(s => s.GetAllPendingTodosOrderByPriorityDueDateAsync(_userId, groupId, 0))
+                    .ReturnsAsync(TodoPage("G"));
 
         var controller = CreateController();
         IActionResult result = await controller.Pending(groupId);
 
         Assert.IsType<ViewResult>(result);
         _todoService.Verify(
-            s => s.GetAllPendingTodosOrderByPriorityDueDateAsync(_userId, groupId), Times.Once);
+            s => s.GetAllPendingTodosOrderByPriorityDueDateAsync(_userId, groupId, 0), Times.Once);
     }
 
     [Fact]
@@ -134,15 +139,15 @@ public class TodoControllerTests
     {
         Guid groupId = Guid.NewGuid();
         _groupService.Setup(s => s.GroupExistsAsync(groupId, _userId)).ReturnsAsync(true);
-        _todoService.Setup(s => s.GetAllCompletedOrderByPriorityDueDateAsync(_userId, groupId))
-                    .ReturnsAsync(TodoTuple("G"));
+        _todoService.Setup(s => s.GetAllCompletedOrderByPriorityDueDateAsync(_userId, groupId, 0))
+                    .ReturnsAsync(TodoPage("G"));
 
         var controller = CreateController();
         IActionResult result = await controller.Completed(groupId);
 
         Assert.IsType<ViewResult>(result);
         _todoService.Verify(
-            s => s.GetAllCompletedOrderByPriorityDueDateAsync(_userId, groupId), Times.Once);
+            s => s.GetAllCompletedOrderByPriorityDueDateAsync(_userId, groupId, 0), Times.Once);
     }
 
     // ===== Details =====

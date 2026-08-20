@@ -21,14 +21,15 @@ public class TodoService: ITodoService
         _groupRepository = groupRepository;
     }
 
-    public async Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllTodosOrderByPriorityDueDateAsync(
-        Guid userId, Guid groupId)
+    public async Task<PagedTodosDto> GetAllTodosOrderByPriorityDueDateAsync(
+        Guid userId, Guid groupId, int page)
     {
         Expression<Func<TodoEntity, bool>> filter = u => u.UserId == userId
                                                          && u.Group.Id == groupId;
 
         IEnumerable<TodoEntity> todos = await _todoRepository
             .GetAllTodoNoTracking(
+                page: page,
                 filterQuery: filter,
                 projectionQuery: t => new TodoEntity
                 {
@@ -63,14 +64,22 @@ public class TodoService: ITodoService
             Status = t.Status.ToString(),
             DueDate = t.DueDate.ToString(DateFormat)
         });
+        
+        PagedTodosDto pagedTodosDto = new PagedTodosDto()
+        {
+            Todos = result,
+            GroupName = group.Name,
+            PageNumber = page
+        };
 
-        return (result, group.Name);
+        return pagedTodosDto;
     }
 
-    public async Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllCompletedOrderByPriorityDueDateAsync(Guid userId, Guid groupId)
+    public async Task<PagedTodosDto> GetAllCompletedOrderByPriorityDueDateAsync(Guid userId, Guid groupId, int page)
     {
         IEnumerable<TodoEntity> todos = await _todoRepository
             .GetAllTodoNoTracking(
+                page: page,
                 filterQuery: t => t.UserId == userId
                                   && t.Group.Id == groupId
                                   && t.Status == Status.Completed,
@@ -99,7 +108,7 @@ public class TodoService: ITodoService
             throw new EntityNotFoundException();
         }
         
-        IEnumerable<AllTodoDto> result = todos.Select(t => new AllTodoDto()
+        IEnumerable<AllTodoDto> todosDto = todos.Select(t => new AllTodoDto()
         {
             Id = t.Id,
             Name = t.Name,
@@ -108,13 +117,21 @@ public class TodoService: ITodoService
             DueDate = t.DueDate.ToString(DateFormat)
         });
 
-        return (result, group.Name);
+        PagedTodosDto result = new PagedTodosDto()
+        {
+            GroupName = group.Name,
+            PageNumber = page,
+            Todos = todosDto
+        };
+
+        return result;
     }
 
-    public async Task<(IEnumerable<AllTodoDto>, string groupName)> GetAllPendingTodosOrderByPriorityDueDateAsync(Guid userId, Guid groupId)
+    public async Task<PagedTodosDto> GetAllPendingTodosOrderByPriorityDueDateAsync(Guid userId, Guid groupId, int page)
     {
         IEnumerable<TodoEntity> todos = await _todoRepository
             .GetAllTodoNoTracking(
+                page: page,
                 filterQuery: t => t.UserId == userId
                                   && t.Group.Id == groupId,
                 projectionQuery: t => new TodoEntity
@@ -141,7 +158,7 @@ public class TodoService: ITodoService
             throw new EntityNotFoundException();
         }
         
-        IEnumerable<AllTodoDto> result = todos.Select(t => new AllTodoDto()
+        IEnumerable<AllTodoDto> todosDto = todos.Select(t => new AllTodoDto()
         {
             Id = t.Id,
             Name = t.Name,
@@ -149,8 +166,15 @@ public class TodoService: ITodoService
             Status = t.Status.ToString(),
             DueDate = t.DueDate.ToString(DateFormat)
         });
+        
+        PagedTodosDto result = new PagedTodosDto()
+        {
+            GroupName = group.Name,
+            PageNumber = page,
+            Todos = todosDto
+        };
 
-        return (result, group.Name);
+        return result;
     }
 
     public async Task<TodoDetailsDto?> GetTodoDetailsAsync(
@@ -320,8 +344,10 @@ public class TodoService: ITodoService
         Expression<Func<TodoEntity, bool>> filter = 
             t => t.UserId == userId && t.DueDate < DateOnly.FromDateTime(DateTime.UtcNow);
 
+        // TODO: change this later
         IEnumerable<TodoEntity> todos = await _todoRepository
             .GetAllTodoNoTracking(
+                page: 1,
                 filterQuery: filter,
                 includeGroup: true,
                 projectionQuery: t => new TodoEntity()

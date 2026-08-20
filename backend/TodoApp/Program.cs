@@ -27,9 +27,20 @@ namespace TodoApp
                                            .Configuration
                                            .GetConnectionString("DevSqlServer")
                                        ?? throw new ConnectionStringNotFound("Connection string is not found");
+            
+            string? redisConnectionString = builder
+                                           .Configuration
+                                           .GetConnectionString("Redis")
+                                       ?? throw new ConnectionStringNotFound("Redis connection string is not found");
 
             builder.Services.AddDbContext<TodoDbContext>(options =>
                 options.UseSqlServer(connectionString));
+            
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = "TodoAppRedisCache";
+            });
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -40,6 +51,7 @@ namespace TodoApp
             builder.Services.AddScoped<ITodoService, TodoService>();
             builder.Services.AddScoped<IGroupService, GroupService>();
             builder.Services.AddScoped<ISupportService, SupportService>();
+            builder.Services.AddScoped<IRedisCacheService, RedisCacheService>();
 
             builder.Services.AddTransient<IIdentitySeeder, IdentitySeeder>();
 

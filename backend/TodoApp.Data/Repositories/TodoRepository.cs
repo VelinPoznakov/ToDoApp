@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApp.Data.Repositories.Contracts;
 using TodoApp.Models.Data;
-using TodoApp.Models.Data.Enums;
+using static TodoApp.GCommon.ApplicationConstants;
 
 namespace TodoApp.Data.Repositories;
 
@@ -13,6 +13,7 @@ public class TodoRepository : BaseRepository, ITodoRepository
     }
 
     public async Task<IEnumerable<TodoEntity>> GetAllTodoNoTracking(
+        int page,
         Expression<Func<TodoEntity, bool>>? filterQuery = null,
         Expression<Func<TodoEntity, TodoEntity>>? projectionQuery = null,
         bool ignoreQueryFilter = false,
@@ -48,6 +49,10 @@ public class TodoRepository : BaseRepository, ITodoRepository
             todos = todos
                 .Where(filterQuery);
         }
+        
+        todos = todos
+            .Skip(page * TodosDefaultPageSize)
+            .Take(TodosDefaultPageSize);
 
         if (projectionQuery != null)
         {

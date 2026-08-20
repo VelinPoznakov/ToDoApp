@@ -29,7 +29,7 @@ public class TodoRepositoryTests
         await using var ctx = new TodoDbContext(options);
         var repo = new TodoRepository(ctx);
 
-        TodoEntity[] result = (await repo.GetAllTodoNoTracking()).ToArray();
+        TodoEntity[] result = (await repo.GetAllTodoNoTracking(page: 0)).ToArray();
 
         Assert.Single(result);
         Assert.Equal("Visible", result[0].Name);
@@ -55,7 +55,7 @@ public class TodoRepositoryTests
         await using var ctx = new TodoDbContext(options);
         var repo = new TodoRepository(ctx);
 
-        string[] names = (await repo.GetAllTodoNoTracking())
+        string[] names = (await repo.GetAllTodoNoTracking(page: 0))
             .Select(t => t.Name)
             .ToArray();
 
@@ -80,7 +80,7 @@ public class TodoRepositoryTests
         await using var ctx = new TodoDbContext(options);
         var repo = new TodoRepository(ctx);
 
-        TodoEntity[] result = (await repo.GetAllTodoNoTracking(ignoreQueryFilter: true)).ToArray();
+        TodoEntity[] result = (await repo.GetAllTodoNoTracking(page: 0, ignoreQueryFilter: true)).ToArray();
 
         Assert.Equal(2, result.Length);
         // Ordered by Status first: Pending (0) before Completed (1).
@@ -109,6 +109,7 @@ public class TodoRepositoryTests
         var repo = new TodoRepository(ctx);
 
         TodoEntity[] result = (await repo.GetAllTodoNoTracking(
+            page: 0,
             filterQuery: t => t.GroupId == groupId,
             projectionQuery: t => new TodoEntity { Id = t.Id, Name = t.Name })).ToArray();
 
@@ -316,6 +317,7 @@ public class TodoRepositoryTests
         var repo = new TodoRepository(ctx);
 
         TodoEntity[] result = (await repo.GetAllTodoNoTracking(
+            page: 0,
             filterQuery: t => t.UserId == userId,
             projectionQuery: t => new TodoEntity
             {
