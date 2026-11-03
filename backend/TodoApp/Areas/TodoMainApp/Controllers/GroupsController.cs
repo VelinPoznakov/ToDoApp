@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+
 using TodoApp.GCommon.Exceptions;
 using TodoApp.Models.Group;
 using TodoApp.Services.Core.Contracts;
@@ -14,27 +14,39 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
     {
         private readonly IGroupService _groupService;
         private readonly ILogger<GroupsController> _logger;
+        private readonly IRedisCacheService _redisCacheService;
 
-        public GroupsController(IGroupService groupService, ILogger<GroupsController> logger)
+        public GroupsController(
+            IGroupService groupService,
+            ILogger<GroupsController> logger,
+            IRedisCacheService redisCacheService)
         {
             _groupService = groupService;
             _logger = logger;
+            _redisCacheService = redisCacheService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] int page = 0)
         {
-            Guid userId = Guid.Parse(GetUserId()!);
-
+            string redisKey = $"groups:{UserId}{page}";
+            
+            IEnumerable<AllGroupsViewModel>? result = await _redisCacheService
+                .GetData<IEnumerable<AllGroupsViewModel>>(redisKey);
+            
+            if(result != null)
+                return View(result);
+            
             IEnumerable<GroupDto> groups = await _groupService
-                .GetAllGroupsAsync(userId);
+                .GetAllGroupsAsync(UserId);
 
-            IEnumerable<AllGroupsViewModel> result
-                = groups.Select(g => new AllGroupsViewModel()
-                {
-                    Id = g.Id,
-                    Name = g.Name
-                });
+            result = groups.Select(g => new AllGroupsViewModel()
+            {
+                Id = g.Id,
+                Name = g.Name
+            });
+            
+            await _redisCacheService.SetData(redisKey, result);
 
             return View(result);
         }
@@ -43,22 +55,24 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         public async Task<IActionResult> DeleteGroup([FromRoute]Guid id)
         {
             if (string.IsNullOrEmpty(id.ToString()))
-            {
                 return BadRequest();
-            }
 
-            Guid userId = Guid.Parse(GetUserId()!);
-
-            bool doesItBelongToTheUserAndExists = await _groupService.GroupExistsAsync(id, userId);
+            bool doesItBelongToTheUserAndExists = await _groupService.GroupExistsAsync(id, UserId);
 
             if (!doesItBelongToTheUserAndExists)
-            {
                 return BadRequest();
-            }
 
             try
             {
                 await _groupService.DeleteGroupAsync(id);
+
+                List<string> redisKeys = await _redisCacheService
+                    .GetRedisKeysOnPatternAsync(UserId.ToString());
+                
+                await _redisCacheService.BulkDeleteAsync(redisKeys);
+                
+                await _redisCacheService.RemoveData($"dashboard:{UserId}");
+                
             }
             catch (EntityNotFoundException)
             {
@@ -83,12 +97,8 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateGroup([FromForm] CreateEditGroupViewModel formData)
         {
-            Guid userId = Guid.Parse(GetUserId()!);
-
             if (!ModelState.IsValid)
-            {
                 return View(formData);
-            }
 
             CreateEditGroupDto newGroup = new CreateEditGroupDto()
             {
@@ -99,7 +109,14 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
 
             try
             {
-                groupId = await _groupService.CreateGroup(newGroup, userId);
+                groupId = await _groupService.CreateGroup(newGroup, UserId);
+                
+                List<string> redisKeys = await _redisCacheService
+                    .GetRedisKeysOnPatternAsync(UserId.ToString());
+                
+                await _redisCacheService.BulkDeleteAsync(redisKeys);
+                await _redisCacheService.RemoveData($"dashboard:{UserId}");
+
             }
             catch (DataPersistFail e)
             {
@@ -123,18 +140,12 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         public async Task<IActionResult> EditGroup([FromRoute]Guid id)
         {
             if (string.IsNullOrWhiteSpace(id.ToString()))
-            {
                 return BadRequest();
-            }
             
-            Guid userId = Guid.Parse(GetUserId()!);
-            
-            bool isGroupOwner = await _groupService.GroupExistsAsync(id, userId);
+            bool isGroupOwner = await _groupService.GroupExistsAsync(id, UserId);
 
             if (!isGroupOwner)
-            {
                 return NotFound();
-            }
 
             try
             {
@@ -157,23 +168,15 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
         public async Task<IActionResult> EditGroup([FromForm] CreateEditGroupViewModel model, [FromRoute] Guid id)
         {
             if (string.IsNullOrEmpty(id.ToString()))
-            {
                 return BadRequest();
-            }
 
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
-            Guid userId = Guid.Parse(GetUserId()!);
-
-            bool isGroupExistingAndBelongToTheUser = await _groupService.GroupExistsAsync(id, userId);
+            bool isGroupExistingAndBelongToTheUser = await _groupService.GroupExistsAsync(id, UserId);
 
             if (!isGroupExistingAndBelongToTheUser)
-            {
                 return NotFound();
-            }
 
             CreateEditGroupDto group = new CreateEditGroupDto()
             {
@@ -183,6 +186,12 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
             try
             {
                 await _groupService.EditGroup(id, group);
+                
+                List<string> redisKeys = await _redisCacheService
+                    .GetRedisKeysOnPatternAsync(UserId.ToString());
+                
+                await _redisCacheService.BulkDeleteAsync(redisKeys);
+                await _redisCacheService.RemoveData($"dashboard:{UserId}");
 
                 return RedirectToAction(nameof(Index), "Todo", new { id = id });
             }

@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
 using TodoApp.Models;
 using TodoApp.Models.Todo;
+using TodoApp.Services.Core;
 using TodoApp.Services.Core.Contracts;
 using TodoApp.Services.Dtos;
+
+using static TodoApp.GCommon.ApplicationConstants.TodosSearchParameter;
 
 namespace TodoApp.Areas.TodoMainApp.Controllers;
 
@@ -10,20 +14,31 @@ public class DashboardController: BaseController
 {
     private readonly ITodoService _todoService;
     private readonly IGroupService _groupService;
+    private readonly IRedisCacheService _redisCacheService;
 
-    public DashboardController(ITodoService todoService, IGroupService groupService)
+    public DashboardController(
+        ITodoService todoService,
+        IGroupService groupService,
+        IRedisCacheService redisCacheService)
     {
         _todoService = todoService;
         _groupService = groupService;
+        _redisCacheService = redisCacheService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        Guid userId = Guid.Parse(GetUserId()!);
-
+        string redisKey = $"dashboard:{UserId}";
+        
+        IndexDashboardViewModel? cacheData = await _redisCacheService
+            .GetData<IndexDashboardViewModel>(redisKey);
+        
+        if(cacheData != null)
+            return View(cacheData);
+        
         IEnumerable<TodosAfterDuelDate> todos = await _todoService
-            .GetTodosAfterDueDate(userId);
+            .GetTodosAfterDueDate(UserId);
 
         IEnumerable<TodoWithGroupNameViewModel> todoToDisplay = 
             todos.Select(t => new TodoWithGroupNameViewModel()
@@ -38,12 +53,12 @@ public class DashboardController: BaseController
             });
 
         int countPendingTodos = await _todoService
-            .CountTodos(userId);
+            .CountTodos(UserId, Pending);
 
         int countCompletedTodos = await _todoService
-            .CountTodos(userId, true);
+            .CountTodos(UserId, Completed);
 
-        int countGroups = await _groupService.GetAllGroupsCount(userId);
+        int countGroups = await _groupService.GetAllGroupsCount(UserId);
 
         IndexDashboardViewModel result = new IndexDashboardViewModel()
         {
@@ -52,6 +67,8 @@ public class DashboardController: BaseController
             CountCompletedTodos = countCompletedTodos,
             CountGroups = countGroups
         };
+
+        await _redisCacheService.SetData(redisKey, result);
 
         return View(result);
     }

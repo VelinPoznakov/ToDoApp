@@ -34,7 +34,7 @@
             </div>
         </a>
         
-        <a class="stat-card">
+        <a class="stat-card" asp-controller="Todo" asp-action="TodosByStatus" asp-route-filter="Pending">
             <span class="stat-card__icon">
                 <!-- Clock icon -->
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -50,7 +50,7 @@
             </div>
         </a>
         
-        <a class="stat-card">
+        <a class="stat-card" asp-controller="Todo" asp-action="TodosByStatus" asp-route-filter="Completed">
             <span class="stat-card__icon">
                 <!-- Check icon -->
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

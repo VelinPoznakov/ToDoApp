@@ -19,4 +19,6 @@ public interface IGroupService
     Task<CreateEditGroupDto> GetGroupNameForEditTracked(Guid id);
 
     Task EditGroup(Guid id, CreateEditGroupDto model);
+
+    Task<Guid?> GetGroupIdByTodoIdAsync(Guid todoId, Guid userId);
 }

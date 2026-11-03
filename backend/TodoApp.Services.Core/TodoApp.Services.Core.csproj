@@ -11,4 +11,8 @@
     <ProjectReference Include="..\TodoApp.Services.Dtos\TodoApp.Services.Dtos.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="3.1.13" />
+  </ItemGroup>
+
 </Project>

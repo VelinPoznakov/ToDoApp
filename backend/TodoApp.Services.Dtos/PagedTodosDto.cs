@@ -1,9 +1,9 @@
 ﻿namespace TodoApp.Services.Dtos;
 
-public class PagedTodosDto
+public class PagedTodosDto<T>
 {
-    public IEnumerable<AllTodoDto> Todos { get; set; }
-        = new List<AllTodoDto>();
+    public IEnumerable<T> Todos { get; set; }
+        = new List<T>();
 
     public string GroupName { get; set; } = null!;
     

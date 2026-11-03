@@ -22,4 +22,6 @@ public interface IGroupRepository
     Task<Group?> GetGroupById(Guid id, Expression<Func<Group, Group>>? projection = null, bool tracked = true);
 
     Task<bool> EditGroup(Group group);
+
+    Task<Guid> GetGroupIdByTodoIdAsync(Guid todoId, Guid userId);
 }

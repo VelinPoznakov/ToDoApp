@@ -135,4 +135,17 @@ public class GroupService: IGroupService
             throw new DataPersistFail();
         }
     }
+    
+    public async Task<Guid?> GetGroupIdByTodoIdAsync(Guid todoId, Guid userId)
+    {
+        Guid? id = await _groupRepository
+            .GetGroupIdByTodoIdAsync(todoId, userId);
+
+        if (id == null)
+        {
+            throw new EntityNotFoundException();
+        }
+
+        return id;
+    }
 }

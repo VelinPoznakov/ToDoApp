@@ -13,7 +13,7 @@ public class TodoRepository : BaseRepository, ITodoRepository
     }
 
     public async Task<IEnumerable<TodoEntity>> GetAllTodoNoTracking(
-        int page,
+        int page = 0,
         Expression<Func<TodoEntity, bool>>? filterQuery = null,
         Expression<Func<TodoEntity, TodoEntity>>? projectionQuery = null,
         bool ignoreQueryFilter = false,
@@ -26,6 +26,7 @@ public class TodoRepository : BaseRepository, ITodoRepository
         if (includeGroup)
         {
             todos = todos
+                .AsSplitQuery()
                 .Include(g => g.Group);
         }
 
@@ -114,20 +115,17 @@ public class TodoRepository : BaseRepository, ITodoRepository
         return result == 1;
     }
 
-    public async Task<int> CountTodosAsync(Expression<Func<TodoEntity, bool>> filter, bool countCompleted = false)
+    public async Task<int> CountTodosAsync(Expression<Func<TodoEntity, bool>> filter, bool ignoreQueryFilter = false)
     {
         IQueryable<TodoEntity> countTodos = DbContext
             .Todos
-            .AsNoTracking()
-            .Where(filter);
+            .AsNoTracking();
+        
+        if(ignoreQueryFilter)
+            countTodos = countTodos.IgnoreQueryFilters();
 
-        if (countCompleted)
-        {
-            return await countTodos
-                .IgnoreQueryFilters()
-                .CountAsync();
-        }
-
-        return await countTodos.CountAsync();
+        return await countTodos
+            .Where(filter)
+            .CountAsync();
     }
 }

@@ -1,6 +1,31 @@
 @using TodoApp.Models.Data.Enums
 @using TodoApp.Web.ViewModels.Todo
+@using static TodoApp.GCommon.ApplicationConstants
 @model PagedTodosViewModel
+
+@{
+    // keep the current tab (?filter=...) when moving between pages
+    string? filter = Context.Request.Query["filter"];
+    
+    // no filter in the URL means All, because All = 0 is the enum's default
+    Enum.TryParse(filter, true, out TodosSearchParameter activeFilter);
+
+    string TabClass(TodosSearchParameter tab) =>
+        tab == activeFilter ? "todo-tab todo-tab--active" : "todo-tab";
+
+    // Model.PageNumber is 1-based, the "page" query parameter is 0-based
+    int currentPage = Model.PageNumber - 1;
+    int totalPages = (int)Math.Ceiling(Model.TotalCount / (double)TodosDefaultPageSize);
+
+    bool hasPreviousPage = currentPage > 0;
+    bool hasNextPage = currentPage + 1 < totalPages;
+
+    // show at most 5 page numbers: up to 2 before and 2 after the current page
+    int firstPage = Math.Max(0, currentPage - 2);
+    int lastPage = Math.Min(totalPages - 1, currentPage + 2);
+
+    string PageUrl(int page) => Url.Action("Index", "Todo", new { area = "TodoMainApp", id = Model.GroupId, page, filter })!;
+}
 
 @section Styles {
     <link rel="stylesheet" href="~/css/todo-index/todo-index.css" asp-append-version="true" />
@@ -45,21 +70,27 @@
     <div class="todo-toolbar">
 
         <div class="todo-tabs">
-            <a class="todo-tab"
+            <a class="@TabClass(TodosSearchParameter.All)"
                asp-area="TodoMainApp"
                asp-controller="Todo"
                asp-action="Index"
-               asp-route-id="@Model.GroupId">All</a>
-            <a class="todo-tab"
+               asp-route-id="@Model.GroupId">
+                @nameof(TodosSearchParameter.All)
+            </a>
+            <a class="@TabClass(TodosSearchParameter.Pending)"
                asp-area="TodoMainApp"
                asp-controller="Todo"
-               asp-action="Pending"
-               asp-route-id="@Model.GroupId">Pending</a>
-            <a class="todo-tab"
+               asp-action="Index"
+               asp-route-id="@Model.GroupId"
+               asp-route-filter="@TodosSearchParameter.Pending"
+               >@nameof(TodosSearchParameter.Pending)</a>
+            <a class="@TabClass(TodosSearchParameter.Completed)"
                asp-area="TodoMainApp"
                asp-controller="Todo"
-               asp-action="Completed"
-               asp-route-id="@Model.GroupId">Completed</a>
+               asp-action="Index"
+               asp-route-id="@Model.GroupId"
+               asp-route-filter="@TodosSearchParameter.Completed"
+               >@nameof(TodosSearchParameter.Completed)</a>
         </div>
 
         <div class="todo-toolbar__right">
@@ -111,6 +142,8 @@
                                   asp-action="Complete"
                                   asp-route-id="@todo.Id"
                                   asp-route-groupId="@Model.GroupId"
+                                  asp-route-page="@currentPage"
+                                  asp-route-filter="@filter"
                                   method="post">
                                 <input type="checkbox"
                                        class="todo-row__check"
@@ -133,6 +166,8 @@
                                   asp-action="Activate"
                                   asp-route-id="@todo.Id"
                                   asp-route-groupId="@Model.GroupId"
+                                  asp-route-page="@currentPage"
+                                  asp-route-filter="@filter"
                                   method="post">
                                 <input type="checkbox"
                                        class="todo-row__check"
@@ -187,12 +222,37 @@
 
     </div>
 
-    <div class="todo-pagination">
-        <button type="button" class="todo-page-btn todo-page-btn--nav" aria-label="Previous">&lsaquo;</button>
-        <button type="button" class="todo-page-btn">1</button>
-        <button type="button" class="todo-page-btn">2</button>
-        <button type="button" class="todo-page-btn todo-page-btn--nav" aria-label="Next">&rsaquo;</button>
-    </div>
+    @if (totalPages > 1)
+    {
+        <div class="todo-pagination">
+
+            @if (hasPreviousPage)
+            {
+                <button type="button" class="todo-page-btn todo-page-btn--nav" aria-label="Previous"
+                        onclick="location.href='@PageUrl(currentPage - 1)'">&lsaquo;</button>
+            }
+
+            @for (int page = firstPage; page <= lastPage; page++)
+            {
+                if (page == currentPage)
+                {
+                    <button type="button" class="todo-page-btn todo-page-btn--active" aria-current="page">@(page + 1)</button>
+                }
+                else
+                {
+                    <button type="button" class="todo-page-btn"
+                            onclick="location.href='@PageUrl(page)'">@(page + 1)</button>
+                }
+            }
+
+            @if (hasNextPage)
+            {
+                <button type="button" class="todo-page-btn todo-page-btn--nav" aria-label="Next"
+                        onclick="location.href='@PageUrl(currentPage + 1)'">&rsaquo;</button>
+            }
+
+        </div>
+    }
 
 </div>
 

@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using TodoApp.Data;
 using TodoApp.Data.Repositories;
 using TodoApp.Data.Repositories.Contracts;
@@ -12,6 +12,8 @@ using TodoApp.Models.Data;
 using TodoApp.Services.Core;
 using TodoApp.Services.Core.Contracts;
 using TodoApp.Web.Infrastructure;
+
+using static TodoApp.GCommon.ApplicationConstants;
 using static TodoApp.Web.Infrastructure.IdentityConfiguration;
 
 namespace TodoApp
@@ -36,10 +38,13 @@ namespace TodoApp
             builder.Services.AddDbContext<TodoDbContext>(options =>
                 options.UseSqlServer(connectionString));
             
+            IConnectionMultiplexer redis = ConnectionMultiplexer.Connect(redisConnectionString);
+            builder.Services.AddSingleton(redis);
+            
             builder.Services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = redisConnectionString;
-                options.InstanceName = "TodoAppRedisCache";
+                options.ConnectionMultiplexerFactory = () => Task.FromResult(redis);
+                options.InstanceName = RedisInstanceName;
             });
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -77,7 +82,7 @@ namespace TodoApp
             });
 
             builder.Services.AddDistributedMemoryCache();
-
+            
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(20);
@@ -101,10 +106,12 @@ namespace TodoApp
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error/500");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 
             app.UseHttpsRedirection();
             app.UseRouting();
@@ -116,6 +123,7 @@ namespace TodoApp
 
             app.SeedRoles();
             app.SeedAdmin();
+            app.ClearRedisCache();
 
             app.MapStaticAssets();
 

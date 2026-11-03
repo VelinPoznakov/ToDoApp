@@ -49,6 +49,7 @@ public class GroupRepository: BaseRepository, IGroupRepository
     {
         return await DbContext.Groups
             .Include(t => t.Todos)
+            .AsSplitQuery()
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(g => g.Id == id);
     }
@@ -109,5 +110,15 @@ public class GroupRepository: BaseRepository, IGroupRepository
         int result = await SaveChangesAsync();
 
         return result == 1;
+    }
+    
+    public async Task<Guid> GetGroupIdByTodoIdAsync(Guid todoId, Guid userId)
+    {
+        return await DbContext
+            .Todos
+            .AsNoTracking()
+            .Where(t => t.Id == todoId && t.UserId == userId)
+            .Select(t => t.GroupId)
+            .FirstOrDefaultAsync();
     }
 }
