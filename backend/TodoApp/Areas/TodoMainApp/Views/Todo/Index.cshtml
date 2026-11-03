@@ -15,14 +15,6 @@
 
     // Model.PageNumber is 1-based, the "page" query parameter is 0-based
     int currentPage = Model.PageNumber - 1;
-    int totalPages = (int)Math.Ceiling(Model.TotalCount / (double)TodosDefaultPageSize);
-
-    bool hasPreviousPage = currentPage > 0;
-    bool hasNextPage = currentPage + 1 < totalPages;
-
-    // show at most 5 page numbers: up to 2 before and 2 after the current page
-    int firstPage = Math.Max(0, currentPage - 2);
-    int lastPage = Math.Min(totalPages - 1, currentPage + 2);
 
     string PageUrl(int page) => Url.Action("Index", "Todo", new { area = "TodoMainApp", id = Model.GroupId, page, filter })!;
 }
@@ -222,37 +214,7 @@
 
     </div>
 
-    @if (totalPages > 1)
-    {
-        <div class="todo-pagination">
-
-            @if (hasPreviousPage)
-            {
-                <button type="button" class="todo-page-btn todo-page-btn--nav" aria-label="Previous"
-                        onclick="location.href='@PageUrl(currentPage - 1)'">&lsaquo;</button>
-            }
-
-            @for (int page = firstPage; page <= lastPage; page++)
-            {
-                if (page == currentPage)
-                {
-                    <button type="button" class="todo-page-btn todo-page-btn--active" aria-current="page">@(page + 1)</button>
-                }
-                else
-                {
-                    <button type="button" class="todo-page-btn"
-                            onclick="location.href='@PageUrl(page)'">@(page + 1)</button>
-                }
-            }
-
-            @if (hasNextPage)
-            {
-                <button type="button" class="todo-page-btn todo-page-btn--nav" aria-label="Next"
-                        onclick="location.href='@PageUrl(currentPage + 1)'">&rsaquo;</button>
-            }
-
-        </div>
-    }
+    <partial name="_PaginationPartial" model='(Model.PageNumber, Model.TotalCount, (Func<int, string>)PageUrl)' />
 
 </div>
 
