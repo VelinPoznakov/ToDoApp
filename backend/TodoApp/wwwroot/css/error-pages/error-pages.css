@@ -1,0 +1,144 @@
+:root{
+    --brand:#6C4CFF;
+    --brand-dark:#5b3df0;
+    --page-bg:#F5F6FA;
+    --card-bg:#ffffff;
+    --card-border:rgba(15,23,42,0.06);
+    --text-dark:#111827;
+    --text-muted:#6b7280;
+}
+
+/* Fill the space under the navbar so the card is centered without page scroll */
+html, body{
+    min-height:100%;
+}
+body{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background-color:var(--page-bg);
+}
+body > div{
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
+}
+
+.error-page{
+    flex:1 1 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem 1rem;
+}
+
+/* ===== Card ===== */
+.error-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:100%;
+    max-width:28rem;
+    padding:2.5rem 2rem;
+    text-align:center;
+    background:var(--card-bg);
+    border:0.0625rem solid var(--card-border);
+    border-radius:1rem;
+    box-shadow:0 1.25rem 3rem rgba(17,24,39,0.12);
+}
+
+/* Each error sets its own accent colour */
+.error-card--bad-request{
+    --accent:#F59E0B;
+    --accent-tint:rgba(245,158,11,0.12);
+}
+.error-card--not-found{
+    --accent:#6C4CFF;
+    --accent-tint:rgba(108,76,255,0.10);
+}
+.error-card--server-error{
+    --accent:#EF4444;
+    --accent-tint:rgba(239,68,68,0.12);
+}
+
+.error-card__icon{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:4rem;
+    height:4rem;
+    margin-bottom:1.25rem;
+    border-radius:1rem;
+    background:var(--accent-tint);
+    color:var(--accent);
+}
+.error-card__icon svg{
+    width:2rem;
+    height:2rem;
+}
+
+.error-card__code{
+    font-size:3rem;
+    font-weight:800;
+    line-height:1;
+    letter-spacing:-0.02em;
+    color:var(--accent);
+}
+
+.error-card__title{
+    margin-top:0.75rem;
+    font-size:1.375rem;
+    font-weight:700;
+    color:var(--text-dark);
+}
+
+.error-card__text{
+    margin-top:0.5rem;
+    font-size:0.9375rem;
+    line-height:1.6;
+    color:var(--text-muted);
+}
+
+/* ===== Home button ===== */
+.error-card__btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    margin-top:1.75rem;
+    padding:0.7rem 1.4rem;
+    border-radius:0.5rem;
+    background:var(--brand);
+    color:#fff;
+    font-size:0.9rem;
+    font-weight:600;
+    text-decoration:none;
+    transition:background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.error-card__btn:hover{
+    background:var(--brand-dark);
+    transform:translateY(-1px);
+    box-shadow:0 0.5rem 1rem rgba(108,76,255,0.3);
+}
+.error-card__btn:active{
+    transform:translateY(0);
+}
+.error-card__btn svg{
+    width:1.1rem;
+    height:1.1rem;
+}
+
+/* ===== Mobile ===== */
+@media (max-width:30rem){
+    .error-card{
+        padding:2rem 1.25rem;
+    }
+
+    .error-card__code{
+        font-size:2.5rem;
+    }
+
+    .error-card__btn{
+        width:100%;
+    }
+}
