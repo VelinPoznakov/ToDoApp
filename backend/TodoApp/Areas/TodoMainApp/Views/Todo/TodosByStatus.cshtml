@@ -59,31 +59,56 @@
 
                 bool isPending = todo.Status == nameof(Status.Pending);
                 string statusAction = isPending ? "Complete" : "Activate";
-                string statusLabel = isPending ? "Mark complete" : "Set to pending";
+                // string statusLabel = isPending ? "Mark complete" : "Set to pending";
 
                 <div class="todo-row">
 
-                    <div class="todo-row__title">
-                        <form class="todo-row__complete"
-                              asp-area="TodoMainApp"
-                              asp-controller="Todo"
-                              asp-action="@statusAction"
-                              asp-route-id="@todo.Id"
-                              asp-route-groupId="@groupId"
-                              asp-route-filter="@filter"
-                              method="post">
-                            <input type="checkbox"
-                                   class="todo-row__check"
-                                   checked="@(!isPending)"
-                                   onchange="this.form.submit()"
-                                   aria-label="@statusLabel"/>
-                        </form>
-                        <a class="todo-row__name"
-                           asp-area="TodoMainApp"
-                           asp-controller="Todo"
-                           asp-action="Details"
-                           asp-route-id="@todo.Id">@todo.Name</a>
-                    </div>
+                    @if (todo.Status == nameof(Status.Pending))
+                    {
+                        <div class="todo-row__title">
+                            <form class="todo-row__complete"
+                                  asp-area="TodoMainApp"
+                                  asp-controller="Todo"
+                                  asp-action="Complete"
+                                  asp-route-id="@todo.Id"
+                                  asp-route-groupId="@Model.GroupId"
+                                  asp-route-filter="@filter"
+                                  method="post">
+                                <input type="checkbox"
+                                       class="todo-row__check"
+                                       onchange="this.form.submit()"
+                                       aria-label="Mark complete"/>
+                            </form>
+                            <a class="todo-row__name"
+                               asp-area="TodoMainApp"
+                               asp-controller="Todo"
+                               asp-action="Details"
+                               asp-route-id="@todo.Id">@todo.Name</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="todo-row__title">
+                            <form class="todo-row__complete"
+                                  asp-area="TodoMainApp"
+                                  asp-controller="Todo"
+                                  asp-action="Activate"
+                                  asp-route-id="@todo.Id"
+                                  asp-route-groupId="@Model.GroupId"
+                                  asp-route-filter="@filter"
+                                  method="post">
+                                <input type="checkbox"
+                                       class="todo-row__check"
+                                       onchange="this.form.submit()"
+                                       aria-label="Mark complete"/>
+                            </form>
+                            <a class="todo-row__name"
+                               asp-area="TodoMainApp"
+                               asp-controller="Todo"
+                               asp-action="Details"
+                               asp-route-id="@todo.Id">@todo.Name</a>
+                        </div>
+                    }
 
                     <p class="todo-row__status todo-row__status--@(todo.Status?.ToLower())" data-label="Status">@todo.Status</p>
                     <p class="todo-row__priority todo-row__priority--@(todo.Priority?.ToLower())" data-label="Priority">@todo.Priority</p>
