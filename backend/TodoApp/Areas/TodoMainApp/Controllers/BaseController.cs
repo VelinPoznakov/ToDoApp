@@ -9,9 +9,11 @@ namespace TodoApp.Areas.TodoMainApp.Controllers
     [AutoValidateAntiforgeryToken]
     public abstract class BaseController : Controller
     {
-        public string? GetUserId()
+        private string? GetUserId()
         {
             return User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+
+        protected Guid UserId => Guid.Parse(GetUserId()!);
     }
 }
