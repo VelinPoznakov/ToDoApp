@@ -4,7 +4,9 @@ using TodoApp.Data.Repositories;
 using TodoApp.Models.Data;
 using TodoApp.Models.Data.Enums;
 
-namespace TodoApp.Services.Tests;
+using static TodoApp.GCommon.ApplicationConstants;
+
+namespace TodoApp.Services.Tests.Todos;
 
 public class TodoRepositoryTests
 {
@@ -269,9 +271,9 @@ public class TodoRepositoryTests
     }
 
     [Fact]
-    public async Task CountTodosAsync_CountCompleted_LiftsQueryFilterSoCallerCanCountCompleted()
+    public async Task CountTodosAsync_IgnoreQueryFilter_LiftsQueryFilterSoCallerCanCountCompleted()
     {
-        // Contract: countCompleted only lifts the global query filter
+        // Contract: ignoreQueryFilter only lifts the global query filter
         // (Status == Pending); the STATUS condition itself is the caller's
         // job (TodoService passes t.Status == Status.Completed).
         var options = TestDb.Options();
@@ -292,7 +294,7 @@ public class TodoRepositoryTests
 
         Assert.Equal(1, await repo.CountTodosAsync(
             t => t.UserId == userId && t.Status == Status.Completed,
-            countCompleted: true));
+            ignoreQueryFilter: true));
     }
 
     // ===== GetAllTodoNoTracking with includeGroup =====
@@ -330,5 +332,96 @@ public class TodoRepositoryTests
         TodoEntity todo = Assert.Single(result);
         Assert.NotNull(todo.Group);
         Assert.Equal("Dashboard Group", todo.Group.Name);
+    }
+
+    // ===== Pagination =====
+
+    private static async Task<DbContextOptions<TodoDbContext>> SeedPendingTodosAsync(
+        Guid userId, int count)
+    {
+        var options = TestDb.Options();
+        Guid groupId = Guid.NewGuid();
+
+        await using var seed = new TodoDbContext(options);
+
+        seed.Groups.Add(TestDb.NewGroup(groupId, userId, "G"));
+        for (int i = 1; i <= count; i++)
+        {
+            seed.Todos.Add(TestDb.NewTodo(
+                groupId, userId, $"Todo {i}", dueDate: new DateOnly(2030, 1, 1).AddDays(i)));
+        }
+
+        await seed.SaveChangesAsync();
+
+        return options;
+    }
+
+    [Fact]
+    public async Task GetAllTodoNoTracking_NoPage_ReturnsTheFirstPageSize()
+    {
+        var options = await SeedPendingTodosAsync(Guid.NewGuid(), TodosDefaultPageSize + 1);
+
+        await using var ctx = new TodoDbContext(options);
+        var repo = new TodoRepository(ctx);
+
+        TodoEntity[] result = (await repo.GetAllTodoNoTracking()).ToArray();
+
+        Assert.Equal(TodosDefaultPageSize, result.Length);
+        Assert.Equal("Todo 1", result[0].Name);
+    }
+
+    [Fact]
+    public async Task GetAllTodoNoTracking_Page_IsZeroBased_AndSkipsThePreviousPages()
+    {
+        var options = await SeedPendingTodosAsync(Guid.NewGuid(), TodosDefaultPageSize + 1);
+
+        await using var ctx = new TodoDbContext(options);
+        var repo = new TodoRepository(ctx);
+
+        TodoEntity todo = Assert.Single(await repo.GetAllTodoNoTracking(page: 1));
+
+        Assert.Equal($"Todo {TodosDefaultPageSize + 1}", todo.Name);
+    }
+
+    [Fact]
+    public async Task GetAllTodoNoTracking_FilterOnCompleted_NeedsIgnoreQueryFilter()
+    {
+        // The global Status == Pending filter is added to every query, so asking
+        // for completed todos without lifting it can never return anything.
+        var options = TestDb.Options();
+        Guid groupId = Guid.NewGuid();
+        Guid userId = Guid.NewGuid();
+
+        await using (var seed = new TodoDbContext(options))
+        {
+            seed.Groups.Add(TestDb.NewGroup(groupId, userId, "G"));
+            seed.Todos.Add(TestDb.NewTodo(groupId, userId, "Done", Status.Completed));
+            await seed.SaveChangesAsync();
+        }
+
+        await using var ctx = new TodoDbContext(options);
+        var repo = new TodoRepository(ctx);
+
+        Assert.Empty(await repo.GetAllTodoNoTracking(
+            filterQuery: t => t.Status == Status.Completed));
+        Assert.Single(await repo.GetAllTodoNoTracking(
+            filterQuery: t => t.Status == Status.Completed,
+            ignoreQueryFilter: true));
+    }
+
+    [Fact]
+    public async Task GetAllTodoNoTracking_ProjectionWithoutGroup_LeavesGroupEmpty_EvenWithInclude()
+    {
+        // A Select decides what comes back, so Include alone cannot fill Group.
+        var options = await SeedPendingTodosAsync(Guid.NewGuid(), 1);
+
+        await using var ctx = new TodoDbContext(options);
+        var repo = new TodoRepository(ctx);
+
+        TodoEntity todo = Assert.Single(await repo.GetAllTodoNoTracking(
+            projectionQuery: t => new TodoEntity { Id = t.Id, Name = t.Name },
+            includeGroup: true));
+
+        Assert.Null(todo.Group);
     }
 }

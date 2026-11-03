@@ -3,7 +3,7 @@ using TodoApp.Data;
 using TodoApp.Data.Repositories;
 using TodoApp.Models.Data;
 
-namespace TodoApp.Services.Tests;
+namespace TodoApp.Services.Tests.Support;
 
 // Repository tests run against EF Core InMemory so the real query behaviour
 // (global query filter, ordering, projection, persistence) is exercised.

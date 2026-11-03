@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using TodoApp.Data;
 using TodoApp.Models.Data;
 
-namespace TodoApp.Services.Tests;
+namespace TodoApp.Services.Tests.Support;
 
 // These tests inspect the EF model itself (and the runtime consequences of it)
 // rather than service behaviour.

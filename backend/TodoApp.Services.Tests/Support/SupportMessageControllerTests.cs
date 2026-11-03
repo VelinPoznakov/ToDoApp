@@ -9,7 +9,7 @@ using TodoApp.Services.Core.Contracts;
 using TodoApp.Services.Dtos;
 using TodoApp.Web.ViewModels.SupportMessage;
 
-namespace TodoApp.Services.Tests;
+namespace TodoApp.Services.Tests.Support;
 
 // Controller tests mock ISupportService and focus on model handling,
 // the user id taken from the claims, and the redirect / error paths.

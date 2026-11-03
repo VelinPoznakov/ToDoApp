@@ -5,7 +5,7 @@ using TodoApp.Data.Repositories;
 using TodoApp.Models.Data;
 using TodoApp.Models.Data.Enums;
 
-namespace TodoApp.Services.Tests;
+namespace TodoApp.Services.Tests.Groups;
 
 // Repository-level tests run against EF Core InMemory so the real query logic
 // (projection, Include + global query filter, persistence) is exercised.
@@ -301,5 +301,29 @@ public class GroupRepositoryTests
 
         Assert.NotNull(group);
         Assert.Equal(2, group!.Todos.Count);
+    }
+
+    // ===== GetGroupIdByTodoIdAsync =====
+
+    [Fact]
+    public async Task GetGroupIdByTodoId_ReturnsTheGroupOnlyForTheOwner()
+    {
+        var options = TestDb.Options();
+        Guid groupId = Guid.NewGuid();
+        Guid userId = Guid.NewGuid();
+        TodoEntity todo = TestDb.NewTodo(groupId, userId, "Owned");
+
+        await using (var seed = new TodoDbContext(options))
+        {
+            seed.Groups.Add(TestDb.NewGroup(groupId, userId, "G"));
+            seed.Todos.Add(todo);
+            await seed.SaveChangesAsync();
+        }
+
+        await using var ctx = new TodoDbContext(options);
+        var repo = new GroupRepository(ctx);
+
+        Assert.Equal(groupId, await repo.GetGroupIdByTodoIdAsync(todo.Id, userId));
+        Assert.Equal(Guid.Empty, await repo.GetGroupIdByTodoIdAsync(todo.Id, Guid.NewGuid()));
     }
 }

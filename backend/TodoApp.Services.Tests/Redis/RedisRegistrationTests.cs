@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TodoApp.Services.Tests;
+namespace TodoApp.Services.Tests.Redis;
 
 // These tests mirror Program.cs's DI registration order for IDistributedCache
 // to prove which implementation actually gets resolved at runtime.

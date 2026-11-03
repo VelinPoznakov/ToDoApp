@@ -3,7 +3,7 @@ using TodoApp.Data;
 using TodoApp.Models.Data;
 using TodoApp.Models.Data.Enums;
 
-namespace TodoApp.Services.Tests;
+namespace TodoApp.Services.Tests.Common;
 
 // Shared helpers for repository tests running on EF Core InMemory.
 public static class TestDb

@@ -6,7 +6,7 @@ using TodoApp.Models.Data;
 using TodoApp.Services.Core;
 using TodoApp.Services.Dtos;
 
-namespace TodoApp.Services.Tests;
+namespace TodoApp.Services.Tests.Support;
 
 // Unit tests for SupportService. ISupportRepository is mocked, so these cover
 // the service's own mapping, the flags it passes down to the repository

@@ -6,7 +6,7 @@ using TodoApp.Models.Data;
 using TodoApp.Services.Core;
 using TodoApp.Services.Dtos;
 
-namespace TodoApp.Services.Tests;
+namespace TodoApp.Services.Tests.Groups;
 
 // Service-level tests mock IGroupRepository so only the service's own logic is
 // under test (mapping, UpdatedOn stamping, failure -> exception translation).
@@ -235,5 +235,20 @@ public class GroupServiceTests
 
         await Assert.ThrowsAsync<DataPersistFail>(
             () => service.EditGroup(id, new CreateEditGroupDto { GroupName = "Y" }));
+    }
+
+    // ===== GetGroupIdByTodoIdAsync =====
+
+    [Fact]
+    public async Task GetGroupIdByTodoId_ReturnsTheRepositoryValue()
+    {
+        Guid todoId = Guid.NewGuid();
+        Guid userId = Guid.NewGuid();
+        Guid groupId = Guid.NewGuid();
+        _repo.Setup(r => r.GetGroupIdByTodoIdAsync(todoId, userId)).ReturnsAsync(groupId);
+
+        var service = CreateService();
+
+        Assert.Equal(groupId, await service.GetGroupIdByTodoIdAsync(todoId, userId));
     }
 }
